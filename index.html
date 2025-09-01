@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="fi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Käsintehdyt vaatteet – Etusivu</title>
+  <meta name="description" content="Käsintehtyjä vaatteita – suomeksi, englanniksi ja dariksi." />
+  <style>
+    :root{
+      --bg:#f7f8fa;
+      --surface:#ffffff;
+      --text:#222;
+      --muted:#555;
+      --line:#ddd;
+      --accent:#14b8a6;
+      --accent2:#2563eb;
+      --shadow:0 4px 12px rgba(0,0,0,.1);
+      --radius:16px;
+    }
+    body{margin:0;font-family:System-ui, Arial, sans-serif, 'Noto Naskh Arabic','Noto Sans Arabic',Tahoma;background:var(--bg);color:var(--text)}
+    .container{max-width:1100px;margin:0 auto;padding:0 20px}
+    header{position:sticky;top:0;z-index:1000;background:#fff;border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
+    nav{display:flex;justify-content:space-between;align-items:center;height:64px}
+    .brand{font-weight:bold}
+    .nav-links{display:flex;gap:14px}
+    .hero{position:relative;aspect-ratio:16/9;overflow:hidden;border-radius:var(--radius);box-shadow:var(--shadow);margin:16px 0}
+    .slide{position:absolute;inset:0;opacity:0;transition:opacity 800ms ease}
+    .slide.active{opacity:1}
+    .slide img {
+  	width: 100%;
+  	height: 100%;
+  	object-fit: contain;     /* ← tämä */
+  	object-position: center;
+  	background: #f9f9f9;        /* #000 tai #f9f9f9 vaalealle teemalle */
+	}
+    .dots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:8px}
+    .dots button{width:10px;height:10px;border-radius:50%;border:1px solid #333;background:#fff}
+    .dots button.active{background:var(--accent)}
+    .section{padding:56px 0}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+    .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+    .card img {
+	width: 100%;
+  	height: 230px;
+  	object-fit: contain;   /* Näyttää koko kuvan */
+  	background: #f9f9f9;   /* Taustaväri tyhjiin kohtiin */
+	}
+    .card .content{padding:16px}
+    .badge{font-size:.75rem;background:#eee;padding:4px 8px;border-radius:999px}
+    .price{font-weight:bold;margin:8px 0}
+    footer{padding:26px 0 60px;color:var(--muted)}
+	.about {
+	  display: grid;
+	  grid-template-columns: 1fr 1fr; /* 2 saraketta: teksti + kuva */
+	  gap: 24px;
+	  align-items: center;
+	}
+	.about-text {
+	  font-size: 1rem;
+	  line-height: 1.6;
+	}
+	.about-photo img {
+	  width: 100%;
+	  height: auto;
+	  border-radius: 12px;
+	  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+	}
+
+	/* Pienillä näytöillä (esim. kännykkä): yksi sarake */
+	@media (max-width: 768px) {
+	  .about {
+	    grid-template-columns: 1fr;
+ 	 }
+	}
+
+  </style>
+
+</head>
+<body>
+  <header>
+    <div class="container">
+      <nav>
+        <div class="brand">Käsintehdyt vaatteet</div>
+        <div class="nav-links">
+          <a href="#etusivu">Etusivu / Home / خانه</a>
+          <a href="#tietoja">Tietoja / About / در باره من</a>
+          <a href="#tuotteet">Tuotteet / Products / محصولات</a>
+          <a href="#yhteys">Yhteys / Contact / تماس</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="etusivu" class="container">
+    <section class="hero">
+      <figure class="slide active"><img src="images/IMG_1494.jpeg" alt="Mekko" loading="lazy" /></figure>
+      <figure class="slide"><img src="images/IMG_1495.jpeg" alt="Pusero" loading="lazy" /></figure>
+      <figure class="slide"><img src="images/IMG_1499.jpeg" alt="Hame" loading="lazy" /></figure>
+	<figure class="slide"><img src="images/IMG_1504.jpeg" alt="Hame" loading="lazy" /></figure>
+	<figure class="slide"><img src="images/IMG_1505.jpeg" alt="Hame" loading="lazy" /></figure>
+      <div class="dots"></div>
+    </section>
+
+    <section id="tietoja" class="section about">
+  <div class="about-text">
+    <h2>Tietoja minusta / About me / در باره من</h2>
+    <p>🇫🇮 Olen syntyisin Afganistanista ja valmistan yksilöllisiä, laadukkaita vaatteita mittatilauksena.</p>
+    <p>🇬🇧 I am originally from Afghanistan and I create unique, high-quality handmade clothes tailored to order.</p>
+    <p lang="fa" dir="rtl">🇦🇫 من اصالتاً از افغانستان هستم و لباس‌های دست‌دوز با کیفیت و منحصر به فرد می‌دوزم که به سفارش شما ساخته می‌شوند.</p>
+  </div>
+  <div class="about-photo">
+    <img src="images/Esittely.jpeg" alt="Esittelykuva" loading="lazy" />
+  </div>
+</section>
+
+
+    <section id="tuotteet" class="section">
+      <h2>Tuotteet / Products / محصولات</h2>
+      <div class="grid">
+        <article class="card">
+          <img src="images/IMG_1495.jpeg" alt="Mekko" loading="lazy" />
+          <div class="content">e
+            <div class="badge">Uutuus / New / جدید</div>
+            <h3>Mekko "Aava"</h3>
+            <p class="price">xxx €</p>
+            <p>🇫🇮 Kevyt, laskeutuva kangas, A-linja.<br>🇬🇧 Light, flowing fabric, A-line.<br>🇦🇫 لباس سبک با پارچه افتان، خط A.</p>
+          </div>
+        </article>
+        <article class="card">
+          <img src="images/IMG_1499.jpeg" alt="Pusero" loading="lazy" />
+          <div class="content">
+            <div class="badge">Klassikko / Classic / کلاسیک</div>
+            <h3>Pusero "Säde"</h3>
+            <p class="price">xxx €</p>
+            <p>🇫🇮 Hengittävä puuvilla.<br>🇬🇧 Breathable cotton.<br>🇦🇫 پنبه قابل تنفس.</p>
+          </div>
+        </article>
+        <article class="card">
+          <img src="images/IMG_1494.jpeg" alt="Hame" loading="lazy" />
+          <div class="content">
+            <div class="badge">Rajoitettu / Limited / محدود</div>
+            <h3>Hame "Kielo"</h3>
+            <p class="price">xxx €</p>
+            <p>🇫🇮 Polvipituus, kukkakuosi.<br>🇬🇧 Knee-length, floral pattern.<br>🇦🇫 دامن تا زانو با طرح گل.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="yhteys" class="section">
+      <h2>Yhteys / Contact / تماس</h2>
+      <p>🇫🇮 Tilaukset ja kysymykset: <a href="mailto:esimerkki@posti.fi">esimerkki@posti.fi</a></p>
+      <p>🇬🇧 Orders and inquiries: <a href="mailto:esimerkki@posti.fi">esimerkki@posti.fi</a></p>
+      <p lang="fa" dir="rtl">🇦🇫 برای سفارش و پرسش‌ها: <a href="mailto:esimerkki@posti.fi">esimerkki@posti.fi</a></p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <small>© <span id="year"></span> Käsintehdyt vaatteet · Handmade with love · با عشق ساخته شده.</small>
+    </div>
+  </footer>
+
+  <script>
+    const slides=document.querySelectorAll('.slide');
+    const dotsWrap=document.querySelector('.dots');
+    let index=0; let timer;
+    slides.forEach((_,i)=>{const b=document.createElement('button');b.addEventListener('click',()=>show(i,true));dotsWrap.appendChild(b)});
+    const dots=dotsWrap.children;
+    function show(i,user=false){slides[index].classList.remove('active');dots[index].classList.remove('active');index=(i+slides.length)%slides.length;slides[index].classList.add('active');dots[index].classList.add('active');if(user)restart();}
+    function next(){show(index+1)};function start(){timer=setInterval(next,5000)};function stop(){clearInterval(timer)};function restart(){stop();start()}
+    dots[0].classList.add('active');start();
+    document.getElementById('year').textContent=new Date().getFullYear();
+  </script>
+</body>
+</html>
