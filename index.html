@@ -22,6 +22,13 @@
     header{position:sticky;top:0;z-index:1000;background:#fff;border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
     nav{display:flex;justify-content:space-between;align-items:center;height:64px}
     .brand{font-weight:bold}
+	.brand img {
+	  height: 50px;
+	  display: block;
+	}
+	footer img {
+	  height: 30px;
+	}	
     .nav-links{display:flex;gap:14px}
     .hero{position:relative;aspect-ratio:16/9;overflow:hidden;border-radius:var(--radius);box-shadow:var(--shadow);margin:16px 0}
     .slide{position:absolute;inset:0;opacity:0;transition:opacity 800ms ease}
@@ -81,7 +88,9 @@
     <div class="container">
       <nav>
 	<!-- Kun saat firman logon, vaihda se tähän -->
-        <div class="brand">Käsintehdyt vaatteet</div> 
+	<div class="brand">
+	  <img src="images/logo.JPG" alt="Nadiya Boutique" style="height:50px;">
+	</div>
         <div class="nav-links">
           <a href="#etusivu">Etusivu / Home / خانه</a>
           <a href="#tietoja">Tietoja / About / در باره من</a>
@@ -157,8 +166,12 @@
   </main>
 	<!-- tähän logo -->
   <footer> 
-    <div class="container"> 
-      <small>© <span id="year"></span> Käsintehdyt vaatteet · Handmade with love · با عشق ساخته شده.</small> 
+    <div class="container">  
+	<small>
+	  © <span id="year"></span> 
+ 	 <img src="images/logo.JPG" alt="Nadiya Boutique" style="height:30px; vertical-align:middle;">
+	  · Handmade with love · با عشق ساخته شده.
+	</small>
     </div>
   </footer>
 
