@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Käsintehdyt vaatteet – Etusivu</title>
-  <meta name="description" content="Käsintehtyjä vaatteita – suomeksi, englanniksi ja dariksi." />
+  <meta name="description" content="Käsintehtyjä vaatteita – suomeksi, englanniksi ja dariksi(Farssi)." />
   <style>
     :root{
       --bg:#f7f8fa;
@@ -29,9 +29,9 @@
     .slide img {
   	width: 100%;
   	height: 100%;
-  	object-fit: contain;     /* ← tämä */
+  	object-fit: contain;     <!-- Näyttää koko kuvan, matematiikassa jaollinen  -->
   	object-position: center;
-  	background: #f9f9f9;        /* #000 tai #f9f9f9 vaalealle teemalle */
+  	background: #f9f9f9;        <!-- #000 tumma tai #f9f9f9 vaalealle teemalle -->
 	}
     .dots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:8px}
     .dots button{width:10px;height:10px;border-radius:50%;border:1px solid #333;background:#fff}
@@ -42,8 +42,8 @@
     .card img {
 	width: 100%;
   	height: 230px;
-  	object-fit: contain;   /* Näyttää koko kuvan */
-  	background: #f9f9f9;   /* Taustaväri tyhjiin kohtiin */
+  	object-fit: contain;   <!-- Näyttää koko kuvan -->
+  	background: #f9f9f9;   <!-- Taustaväriä tyhjiin kohtiin -->
 	}
     .card .content{padding:16px}
     .badge{font-size:.75rem;background:#eee;padding:4px 8px;border-radius:999px}
@@ -51,7 +51,7 @@
     footer{padding:26px 0 60px;color:var(--muted)}
 	.about {
 	  display: grid;
-	  grid-template-columns: 1fr 1fr; /* 2 saraketta: teksti + kuva */
+	  grid-template-columns: 1fr 1fr; <!-- 2 saraketta: teksti + kuva esittely sectio -->
 	  gap: 24px;
 	  align-items: center;
 	}
@@ -66,7 +66,7 @@
 	  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 	}
 
-	/* Pienillä näytöillä (esim. kännykkä): yksi sarake */
+	<!-- Pienillä näytöillä (esim. kännykkä): yksi sarake -->
 	@media (max-width: 768px) {
 	  .about {
 	    grid-template-columns: 1fr;
@@ -80,7 +80,8 @@
   <header>
     <div class="container">
       <nav>
-        <div class="brand">Käsintehdyt vaatteet</div>
+	<!-- Kun saat firman logon, vaihda se tähän -->
+        <div class="brand">Käsintehdyt vaatteet</div> 
         <div class="nav-links">
           <a href="#etusivu">Etusivu / Home / خانه</a>
           <a href="#tietoja">Tietoja / About / در باره من</a>
@@ -121,16 +122,16 @@
           <img src="./images/img_1495.JPEG" alt="Mekko" loading="lazy" />
           <div class="content">e
             <div class="badge">Uutuus / New / جدید</div>
-            <h3>Mekko "Aava"</h3>
+            <h3>Mekko "ABC01"</h3>
             <p class="price">xxx €</p>
             <p>🇫🇮 Kevyt, laskeutuva kangas, A-linja.<br>🇬🇧 Light, flowing fabric, A-line.<br>🇦🇫 لباس سبک با پارچه افتان، خط A.</p>
           </div>
         </article>
         <article class="card">
-          <img src="./images/img_1499.JPEG" alt="Pusero" loading="lazy" />
+          <img src="./images/img_1499.JPEG" alt="Kietaisu Hame" loading="lazy" />
           <div class="content">
             <div class="badge">Klassikko / Classic / کلاسیک</div>
-            <h3>Pusero "Säde"</h3>
+            <h3>Pusero "ABC02"</h3>
             <p class="price">xxx €</p>
             <p>🇫🇮 Hengittävä puuvilla.<br>🇬🇧 Breathable cotton.<br>🇦🇫 پنبه قابل تنفس.</p>
           </div>
@@ -139,7 +140,7 @@
           <img src="./images/img_1494.JPEG" alt="Hame" loading="lazy" />
           <div class="content">
             <div class="badge">Rajoitettu / Limited / محدود</div>
-            <h3>Hame "Kielo"</h3>
+            <h3>Hame "ABC03"</h3>
             <p class="price">xxx €</p>
             <p>🇫🇮 Polvipituus, kukkakuosi.<br>🇬🇧 Knee-length, floral pattern.<br>🇦🇫 دامن تا زانو با طرح گل.</p>
           </div>
@@ -149,15 +150,15 @@
 
     <section id="yhteys" class="section">
       <h2>Yhteys / Contact / تماس</h2>
-      <p>🇫🇮 Tilaukset ja kysymykset: <a href="mailto:esimerkki@posti.fi">esimerkki@posti.fi</a></p>
+      <p>🇫🇮 Tilaukset ja kysymykset: <a href="mailto:esimerkki@posti.fi">esimerkki@posti.fi</a></p> <!-- e-mail kuvana -->
       <p>🇬🇧 Orders and inquiries: <a href="mailto:esimerkki@posti.fi">esimerkki@posti.fi</a></p>
       <p lang="fa" dir="rtl">🇦🇫 برای سفارش و پرسش‌ها: <a href="mailto:esimerkki@posti.fi">esimerkki@posti.fi</a></p>
     </section>
   </main>
-
-  <footer>
-    <div class="container">
-      <small>© <span id="year"></span> Käsintehdyt vaatteet · Handmade with love · با عشق ساخته شده.</small>
+	<!-- tähän logo -->
+  <footer> 
+    <div class="container"> 
+      <small>© <span id="year"></span> Käsintehdyt vaatteet · Handmade with love · با عشق ساخته شده.</small> 
     </div>
   </footer>
 
