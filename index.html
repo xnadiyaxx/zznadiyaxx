@@ -21,14 +21,8 @@
     .container{max-width:1100px;margin:0 auto;padding:0 20px}
     header{position:sticky;top:0;z-index:1000;background:#fff;border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
     nav{display:flex;justify-content:space-between;align-items:center;height:64px}
-    .brand{font-weight:bold}
-	.brand img {
-	  height: 70px;
-	  display: block;
-	}
-	footer img {
-	  height: 40px;
-	}	
+   
+
     .nav-links{display:flex;gap:14px}
     .hero{position:relative;aspect-ratio:16/9;overflow:hidden;border-radius:var(--radius);box-shadow:var(--shadow);margin:16px 0}
     .slide{position:absolute;inset:0;opacity:0;transition:opacity 800ms ease}
@@ -80,6 +74,33 @@
  	 }
 	}
 
+footer{padding:26px 0 60px; color:var(--muted)}
+footer img{height:30px; vertical-align:middle}
+
+   
+	<!-- Tästä eteenpäin lisätty 3.9 -->
+    .brand { font-weight:bold }
+    .brand img {
+      height: 70px;
+      display: block;
+    }
+    footer img {
+      height: 40px;
+    }
+
+.notice {
+background: #fff3cd;
+color: #856404;
+border: 1px solid #ffeeba;
+border-radius: 8px;
+padding: 12px 16px;
+margin: 20px 0;
+font-size: 1rem;
+line-height: 1.6;
+box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+.notice p { margin: 6px 0; }
+
   </style>
 
 </head>
@@ -101,7 +122,15 @@
     </div>
   </header>
 
+
   <main id="etusivu" class="container">
+	<div class="notice">
+<!-- HUOM    Kun sivu on valmis poista tämä huomautus  HUOM -->
+
+	<p>🇫🇮 Huom! Sivu on kehitysvaiheessa. Toimiva sivu tulee pian.</p>
+	  <p>🇬🇧 Note! This page is under development. The website will be completed soon.</p>
+	  <p lang="fa" dir="rtl">🇦🇫 توجه! این صفحه در حال توسعه است. نسخه کامل به زودی در دسترس خواهد بود.</p>
+	</div>
     <section class="hero">
       <figure class="slide active"><img src="./images/img_1494.JPEG" alt="Mekko" loading="lazy" /></figure>
       <figure class="slide"><img src="./images/img_1495.JPEG" alt="Pusero" loading="lazy" /></figure>
