@@ -30,9 +30,9 @@
     .slide img {
   	width: 100%;
   	height: 100%;
-  	object-fit: contain;     <!-- Näyttää koko kuvan, matematiikassa jaollinen  -->
+  	object-fit: contain;     /* Näyttää koko kuvan, matematiikassa jaollinen  */
   	object-position: center;
-  	background: #f9f9f9;        <!-- #000 tumma tai #f9f9f9 vaalealle teemalle -->
+  	background: #f9f9f9;        /* #000 tumma tai #f9f9f9 vaalealle teemalle */
 	}
     .dots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:8px}
     .dots button{width:10px;height:10px;border-radius:50%;border:1px solid #333;background:#fff}
@@ -43,8 +43,8 @@
     .card img {
 	width: 100%;
   	height: 230px;
-  	object-fit: contain;   <!-- Näyttää koko kuvan -->
-  	background: #f9f9f9;   <!-- Taustaväriä tyhjiin kohtiin -->
+  	object-fit: contain;   /* Näyttää koko kuvan */
+  	background: #f9f9f9;   /* Taustaväriä tyhjiin kohtiin */
 	}
     .card .content{padding:16px}
     .badge{font-size:.75rem;background:#eee;padding:4px 8px;border-radius:999px}
@@ -52,7 +52,7 @@
     footer{padding:26px 0 60px;color:var(--muted)}
 	.about {
 	  display: grid;
-	  grid-template-columns: 1fr 1fr; <!-- 2 saraketta: teksti + kuva esittely sectio -->
+	  grid-template-columns: 1fr 1fr; /* 2 saraketta: teksti + kuva esittely sectio */
 	  gap: 24px;
 	  align-items: center;
 	}
@@ -67,7 +67,7 @@
 	  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 	}
 
-	<!-- Pienillä näytöillä (esim. kännykkä): yksi sarake -->
+	/* Pienillä näytöillä (esim. kännykkä): yksi sarake */
 	@media (max-width: 768px) {
 	  .about {
 	    grid-template-columns: 1fr;
@@ -78,7 +78,7 @@ footer{padding:26px 0 60px; color:var(--muted)}
 footer img{height:30px; vertical-align:middle}
 
    
-	<!-- Tästä eteenpäin lisätty 3.9 -->
+	/* Tästä eteenpäin lisätty 3.9 */
     .brand { font-weight:bold }
     .brand img {
       height: 70px;
@@ -101,9 +101,45 @@ box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 .notice p { margin: 6px 0; }
 
+
+.zoom {
+  position: relative;
+  overflow: hidden;
+  cursor: zoom-in;
+}
+.zoom img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform .15s ease;
+}
+/* Estä selaimen oman pyyhkäisy-zoomauksen zoom-alueella */
+.zoom {
+  position: relative;
+  overflow: hidden;
+  touch-action: none;           /* tärkeä mobiilissa */
+  cursor: zoom-in;
+}
+.zoom img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform .15s ease;
+  will-change: transform;       /* pehmentää animaation */
+  user-select: none;
+  -webkit-user-drag: none;
+}
+/* Näytä zoom-kursori vain laitteissa joissa hover on käytössä (desktop) */
+@media (hover: none) {
+  .zoom { cursor: default; }
+}
+
+
   </style>
 
 </head>
+
+
 <body>
   <header>
     <div class="container">
@@ -156,15 +192,29 @@ box-shadow: 0 2px 6px rgba(0,0,0,0.05);
     <section id="tuotteet" class="section">
       <h2>Tuotteet / Products / محصولات</h2>
       <div class="grid">
-        <article class="card">
+<!--        <article class="card">
           <img src="./images/img_1495.JPEG" alt="Mekko" loading="lazy" />
           <div class="content">e
             <div class="badge">Uutuus / New / جدید</div>
             <h3>Mekko "ABC01"</h3>
-            <p class="price">xxx €</p>
+            <p class="price">x €</p>
             <p>🇫🇮 Kevyt, laskeutuva kangas, A-linja.<br>🇬🇧 Light, flowing fabric, A-line.<br>🇦🇫 لباس سبک با پارچه افتان، خط A.</p>
           </div>
-        </article>
+        </article> -->
+	<article class="card">
+	  <div class="zoom">
+ 	   <img src="./images/img_1495.JPEG" alt="Mekko" />
+	  </div>
+	  <div class="content">
+	    <div class="badge">Uutuus</div>
+ 	   <h3>Mekko "Aava"</h3>
+	    <p class="price">zxxx €</p>
+	    <p class="lead">Kevyt, laskeutuva kangas, A-linja.</p>
+	    <a class="btn" href="https://buy.stripe.com/test_123" target="_blank">Osta nyt</a>
+	  </div>
+	</article>
+
+
         <article class="card">
           <img src="./images/img_1499.JPEG" alt="Kietaisu Hame" loading="lazy" />
           <div class="content">
@@ -236,4 +286,57 @@ box-shadow: 0 2px 6px rgba(0,0,0,0.05);
     document.getElementById('year').textContent=new Date().getFullYear();
   </script>
 </body>
+
+<script>
+(function(){
+  const SCALE = 2.2; // suurennuskerroin: säädä makusi mukaan
+
+  document.querySelectorAll('.zoom').forEach(box=>{
+    const img = box.querySelector('img');
+    let isZoomed = false;
+
+    function setOrigin(clientX, clientY){
+      const r = box.getBoundingClientRect();
+      const x = ((clientX - r.left) / r.width) * 100;
+      const y = ((clientY - r.top)  / r.height) * 100;
+      img.style.transformOrigin = `${x}% ${y}%`;
+    }
+    function zoomIn(x, y){
+      setOrigin(x, y);
+      img.style.transform = `scale(${SCALE})`;
+      isZoomed = true;
+    }
+    function zoomOut(){
+      img.style.transform = 'scale(1)';
+      img.style.transformOrigin = 'center';
+      isZoomed = false;
+    }
+
+    // Yhdistetty hiiri + kosketus
+    box.addEventListener('pointerdown', (e)=>{
+      box.setPointerCapture(e.pointerId);
+      if (!isZoomed) zoomIn(e.clientX, e.clientY);
+    });
+    box.addEventListener('pointermove', (e)=>{
+      if (!isZoomed) return;
+      setOrigin(e.clientX, e.clientY);
+    });
+    box.addEventListener('pointerup', zoomOut);
+    box.addEventListener('pointercancel', zoomOut);
+    box.addEventListener('lostpointercapture', zoomOut);
+
+    // (Valinnainen) Desktop-hover-tuki: jos haluat vanhan hover-käytöksen takaisin
+    box.addEventListener('mouseenter', (e)=>{
+      if (window.matchMedia('(hover:hover)').matches) {
+        zoomIn(e.clientX, e.clientY);
+      }
+    });
+    box.addEventListener('mousemove', (e)=>{
+      if (!window.matchMedia('(hover:hover)').matches) return;
+      if (isZoomed) setOrigin(e.clientX, e.clientY);
+    });
+    box.addEventListener('mouseleave', zoomOut);
+  });
+})();
+</script>
 </html>
