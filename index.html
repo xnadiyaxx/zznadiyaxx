@@ -134,7 +134,7 @@ box-shadow: 0 2px 6px rgba(0,0,0,0.05);
   .zoom { cursor: default; }
 }
 
-
+/* Instagram- ja contact-laatikot */
 .instagram-box, .contact-box {
   max-width: 300px;
   margin: 20px auto;
@@ -154,6 +154,18 @@ box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 .instagram-box svg {
   margin-bottom: 0.8rem;
   color: #E1306C; /* Instagram pinkki */
+}
+
+/* Sähköpostilinkki */
+.email-link {
+  color: #000;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.email-link:hover {
+  color: #E1306C; /* Hover-efekti */
+  text-decoration: underline;
 }
 
 
@@ -288,21 +300,23 @@ box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 <!-- Tilaukset ja kysymykset laatikko -->
 <div class="contact-box">
   <p>🇫🇮 <strong>Tilaukset ja kysymykset:</strong></p>
-  <p>nahidneimati017 
-     <img src="c03a87de-0cc2-4261-8c6a-a894a1ebcb41.png" alt="@" style="height:14px; vertical-align:middle;">
-     gmail.com
-  </p>
-  
   <p>🇬🇧 <strong>Orders and inquiries:</strong></p>
-  <p>nahidneimati017 
-     <img src="c03a87de-0cc2-4261-8c6a-a894a1ebcb41.png" alt="@" style="height:14px; vertical-align:middle;">
-     gmail.com
-  </p>
-  
   <p lang="fa" dir="rtl">🇦🇫 <strong>برای سفارش و پرسش‌ها:</strong></p>
-  <p lang="fa" dir="rtl">nahidneimati017 
-     <img src="c03a87de-0cc2-4261-8c6a-a894a1ebcb41.png" alt="@" style="height:14px; vertical-align:middle;">
-     gmail.com
+
+  <!-- Yksi sähköpostiosoite kaikille -->
+  <p>
+    <a href="mailto:nahidneimati017<at>gmail.com" class="email-link">
+      nahidneimati017
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" 
+           viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle; margin: 0 2px;">
+        <path d="M12 2C6.486 2 2 6.486 2 12s4.486 
+                 10 10 10h5v-2h-5c-4.411 0-8-3.589-8-8s3.589-8 
+                 8-8 8 3.589 8 8c0 1.654-1.346 3-3 
+                 3s-3-1.346-3-3V7h-2v5c0 2.206 
+                 1.794 4 4 4s4-1.794 4-4c0-4.411-3.589-8-8-8z"/>
+      </svg>
+      gmail.com
+    </a>
   </p>
 </div>
 
