@@ -46,14 +46,25 @@
 	  <p>Note! This page is under development. The website will be completed soon.</p>
 	  <p lang="fa" dir="rtl">توجه! این صفحه در حال توسعه است. نسخه کامل به زودی در دسترس خواهد بود.</p>
 	</div>
-     <section class="hero">
-     <figure class="slide active"><img src="./images/a-20250912-0003.jpg" alt="Mekko" loading="lazy" /></figure>
-<figure class="slide active"><img src="./images/b-20250912-009.jpg" alt="Mekko" loading="lazy" /></figure>
-<figure class="slide active"><img src="./images/c-20250912-0005.jpg" alt="Mekko" loading="lazy" /></figure>
-<figure class="slide active"><img src="./images/e-20250912-0012.jpg" alt="Mekko" loading="lazy" /></figure>
-<figure class="slide active"><img src="./images/d-20250912-009.jpg" alt="Mekko" loading="lazy" /></figure>
-      <div class="dots"></div>
-    </section>
+ <section class="hero">
+  <figure class="slide active">
+    <img src="./images/a-20250912-0003.jpg" alt="Mekko" fetchpriority="high" />
+  </figure>
+  <figure class="slide">
+    <img src="./images/b-20250912-009.jpg" alt="Mekko" loading="lazy" />
+  </figure>
+  <figure class="slide">
+    <img src="./images/c-20250912-0005.jpg" alt="Mekko" loading="lazy" />
+  </figure>
+  <figure class="slide">
+    <img src="./images/e-20250912-0012.jpg" alt="Mekko" loading="lazy" />
+  </figure>
+  <figure class="slide">
+    <img src="./images/d-20250912-009.jpg" alt="Mekko" loading="lazy" />
+  </figure>
+  <div class="dots"></div>
+</section>
+
 
     <section id="tietoja" class="section about">
   <div class="about-text">
@@ -143,16 +154,49 @@ Together we will awaken the beauty and splendor of Afghanistan in your everyday 
   </footer>
 
   <script>
-    const slides=document.querySelectorAll('.slide');
-    const dotsWrap=document.querySelector('.dots');
-    let index=0; let timer;
-    slides.forEach((_,i)=>{const b=document.createElement('button');b.addEventListener('click',()=>show(i,true));dotsWrap.appendChild(b)});
-    const dots=dotsWrap.children;
-    function show(i,user=false){slides[index].classList.remove('active');dots[index].classList.remove('active');index=(i+slides.length)%slides.length;slides[index].classList.add('active');dots[index].classList.add('active');if(user)restart();}
-    function next(){show(index+1)};function start(){timer=setInterval(next,5000)};function stop(){clearInterval(timer)};function restart(){stop();start()}
-    dots[0].classList.add('active');start();
-    document.getElementById('year').textContent=new Date().getFullYear();
-  </script>
+  // Kuinka nopeasti kuva vaihtuu (ms)
+  const SLIDE_INTERVAL = 2000;
+
+  const slides = document.querySelectorAll('.slide');
+  const dotsWrap = document.querySelector('.dots');
+  let index = 0;
+  let timer;
+
+  // Varmista: vain ensimmäinen dia aktiivinen alussa
+  slides.forEach((s, i) => s.classList.toggle('active', i === 0));
+
+  // Luo pisteet
+  slides.forEach((_, i) => {
+    const b = document.createElement('button');
+    b.addEventListener('click', () => show(i, true));
+    dotsWrap.appendChild(b);
+  });
+  const dots = dotsWrap.children;
+
+  // Alusta pisteet
+  [...dots].forEach((d, i) => d.classList.toggle('active', i === 0));
+
+  function show(i, user = false) {
+    slides[index].classList.remove('active');
+    dots[index].classList.remove('active');
+    index = (i + slides.length) % slides.length;
+    slides[index].classList.add('active');
+    dots[index].classList.add('active');
+    if (user) restart();
+  }
+
+  function next() { show(index + 1); }
+  function start() { timer = setInterval(next, SLIDE_INTERVAL); }
+  function stop() { clearInterval(timer); }
+  function restart() { stop(); start(); }
+
+  start();
+
+  // (muut jutut)
+  const y = document.getElementById('year');
+  if (y) y.textContent = new Date().getFullYear();
+</script>
+
 </body>
 
 <script>
