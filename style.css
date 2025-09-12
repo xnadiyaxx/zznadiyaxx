@@ -1,0 +1,161 @@
+    :root{
+      --bg:#f7f8fa;
+      --surface:#ffffff;
+      --text:#222;
+      --muted:#555;
+      --line:#ddd;
+      --accent:#14b8a6;
+      --accent2:#2563eb;
+      --shadow:0 4px 12px rgba(0,0,0,.1);
+      --radius:16px;
+    }
+    body{margin:0;font-family:System-ui, Arial, sans-serif, 'Noto Naskh Arabic','Noto Sans Arabic',Tahoma;background:var(--bg);color:var(--text)}
+    .container{max-width:1100px;margin:0 auto;padding:0 20px}
+    header{position:sticky;top:0;z-index:1000;background:#fff;border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
+    nav{display:flex;justify-content:space-between;align-items:center;height:64px}
+   
+
+    .nav-links{display:flex;gap:14px}
+    .hero{position:relative;aspect-ratio:16/9;overflow:hidden;border-radius:var(--radius);box-shadow:var(--shadow);margin:16px 0}
+    .slide{position:absolute;inset:0;opacity:0;transition:opacity 800ms ease}
+    .slide.active{opacity:1}
+    .slide img {
+  	width: 100%;
+  	height: 100%;
+  	object-fit: contain;     /* Näyttää koko kuvan, matematiikassa jaollinen  */
+  	object-position: center;
+  	background: #f9f9f9;        /* #000 tumma tai #f9f9f9 vaalealle teemalle */
+	}
+    .dots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:8px}
+    .dots button{width:10px;height:10px;border-radius:50%;border:1px solid #333;background:#fff}
+    .dots button.active{background:var(--accent)}
+    .section{padding:56px 0}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+    .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+    .card img {
+	width: 100%;
+  	height: 230px;
+  	object-fit: contain;   /* Näyttää koko kuvan */
+  	background: #f9f9f9;   /* Taustaväriä tyhjiin kohtiin */
+	}
+    .card .content{padding:16px}
+    .badge{font-size:.75rem;background:#eee;padding:4px 8px;border-radius:999px}
+    .price{font-weight:bold;margin:8px 0}
+    footer{padding:26px 0 60px;color:var(--muted)}
+	.about {
+	  display: grid;
+	  grid-template-columns: 1fr 1fr; /* 2 saraketta: teksti + kuva esittely sectio */
+	  gap: 24px;
+	  align-items: center;
+	}
+	.about-text {
+	  font-size: 1rem;
+	  line-height: 1.6;
+	}
+	.about-photo img {
+	  width: 100%;
+	  height: auto;
+	  border-radius: 12px;
+	  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+	}
+
+	/* Pienillä näytöillä (esim. kännykkä): yksi sarake */
+	@media (max-width: 768px) {
+	  .about {
+	    grid-template-columns: 1fr;
+ 	 }
+	}
+
+footer{padding:26px 0 60px; color:var(--muted)}
+footer img{height:30px; vertical-align:middle}
+
+   
+	/* Tästä eteenpäin lisätty 3.9 */
+    .brand { font-weight:bold }
+    .brand img {
+      height: 70px;
+      display: block;
+    }
+    footer img {
+      height: 40px;
+    }
+
+.notice {
+background: #fff3cd;
+color: #856404;
+border: 1px solid #ffeeba;
+border-radius: 8px;
+padding: 12px 16px;
+margin: 20px 0;
+font-size: 1rem;
+line-height: 1.6;
+box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+.notice p { margin: 6px 0; }
+
+
+.zoom {
+  position: relative;
+  overflow: hidden;
+  cursor: zoom-in;
+}
+.zoom img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform .15s ease;
+}
+/* Estä selaimen oman pyyhkäisy-zoomauksen zoom-alueella */
+.zoom {
+  position: relative;
+  overflow: hidden;
+  touch-action: none;           /* tärkeä mobiilissa */
+  cursor: zoom-in;
+}
+.zoom img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform .15s ease;
+  will-change: transform;       /* pehmentää animaation */
+  user-select: none;
+  -webkit-user-drag: none;
+}
+/* Näytä zoom-kursori vain laitteissa joissa hover on käytössä (desktop) */
+@media (hover: none) {
+  .zoom { cursor: default; }
+}
+
+/* Instagram- ja contact-laatikot */
+.instagram-box, .contact-box {
+  max-width: 300px;
+  margin: 20px auto;
+  padding: 1rem;
+  text-align: center;
+  background: #fff;
+  border: 2px solid #e5e5e5;
+  border-radius: 12px;
+  transition: transform .2s, border-color .2s;
+}
+
+.instagram-box:hover, .contact-box:hover {
+  border-color: #d1d1d1;
+  transform: translateY(-3px);
+}
+
+.instagram-box svg {
+  margin-bottom: 0.8rem;
+  color: #E1306C; /* Instagram pinkki */
+}
+
+/* Sähköpostilinkki */
+.email-link {
+  color: #000;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.email-link:hover {
+  color: #E1306C; /* Hover-efekti */
+  text-decoration: underline;
+}
