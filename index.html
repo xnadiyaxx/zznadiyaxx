@@ -66,6 +66,160 @@
 </section>
 
 
+
+
+
+<section class="video-section">
+  <!-- Pieni kontti vain videolle -->
+  <div class="media">
+    <video id="nadiyaVideo" class="nadiya-video" controls playsinline>
+      <source src="./nadiya.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+  </div>
+
+  <!-- Leveämpi kontti tekstityksille -->
+  <div class="subs">
+    <p class="fa" dir="rtl" lang="fa"></p>
+    <p class="fi" lang="fi"></p>
+    <p class="en" lang="en"></p>
+  </div>
+</section>
+
+<style>
+/* Yleisasettelu */
+.video-section{
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+
+/* VIDEO: pieni ja keskellä */
+.video-section .media{
+  width: 20%;              /* säädä: 25–40% maun mukaan */
+  margin: 0 auto 1rem;
+}
+.nadiya-video{
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0,0,0,.12);
+  display: block;
+}
+
+/* TEKSTI: leveämpi kuin video */
+.subs{
+  max-width: 80%;          /* säädä: 80–100% */
+  margin: 0 auto;
+  padding: 1rem 1.2rem;
+  background: rgba(255,255,255,0.95);
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  min-height: 4.5rem;
+}
+.subs p{
+  margin: .12rem 0;
+  line-height: 1.5;
+  text-align: center;
+}
+.subs p.fa{ font-size: 1.2rem; font-weight: 600; }
+.subs p.fi, .subs p.en{ font-size: 1rem; color: #1f2937; }
+
+/* Mobiili: video isommaksi, teksti täysleveäksi */
+@media (max-width: 720px){
+  .video-section .media{ width: 85%; }
+  .subs{ max-width: 100%; }
+  .subs p.fa{ font-size: 1.05rem; }
+  .subs p.fi, .subs p.en{ font-size: .95rem; }
+}
+</style>
+
+
+
+<script>
+(function(){
+  const lines = [
+    { fa:"سلام امید است که جور و صحت من باشین", fi:"Hei, toivon että voitte hyvin ja olette terveitä.", en:"Hello, I hope you are well and healthy." },
+    { fa:"خوش آمدید میگم عزیزانی را که نو مرا فالو کردن", fi:"Toivotan tervetulleiksi rakkaat ystävät, jotka ovat juuri alkaneet seurata minua.", en:"I warmly welcome the dear ones who have just started following me." },
+    { fa:"تشکر بسیار زیاد از حمایت تان", fi:"Kiitos todella paljon tuestanne.", en:"Thank you very much for your support." },
+    { fa:"همچنان از دوستان کتابه امروز همرای ما بودن و بر من لطف می روانی داشتن تشکر", fi:"Samoin kiitos ystäville, jotka olivat tänään kanssamme ja osoittivat minulle ystävällisyyttä.", en:"Also, thanks to the friends who were with us today and showed me kindness." },
+    { fa:"و کمی معلومات به عزیزایی که نو استن", fi:"Ja vähän tietoa uusille rakkaille ystäville.", en:"And some information for the dear ones who are new." },
+    { fa:"عزیزان تمامی سفرشات شما از طریق واتس اپ سبت میشه", fi:"Rakkaat, kaikki tilauksenne kirjataan WhatsAppin kautta.", en:"Dear ones, all your orders are registered through WhatsApp." },
+    { fa:"که نمبر در انستاگرام ما و اطیتاک ما می باشه", fi:"Numero löytyy meidän Instagramistamme ja TikTokistamme.", en:"The number is available on our Instagram and TikTok." },
+    { fa:"همچنان من در استوری می مانم که دست رسی برتون راحت ب", fi:"Lisäksi laitan sen myös Storyyn, jotta pääsette siihen helposti.", en:"I will also put it in my Story so that you can access it easily." },
+    { fa:"و تمامی سفرشای شما در بین 3 تا 5 روز در سراسر اروپا میرسد", fi:"Kaikki tilauksenne saapuvat 3–5 päivän kuluessa kaikkialla Euroopassa.", en:"All your orders will arrive within 3 to 5 days across Europe." },
+    { fa:"و ارسالهای ما رایگان است و کدام حضینه اضافه در سراسر اروپا شما نمی آید", fi:"Lähetyksemme ovat ilmaisia, eikä lisäkuluja tule missään Euroopassa.", en:"Our deliveries are free, and you will not have any extra costs anywhere in Europe." },
+    { fa:"همچنان شما امکانی از ایراد دارین که دیزاین ها و گلوهای تفلانه و هر چیزهایی که در نظر دارین ها در واتساب سفرش کنین", fi:"Lisäksi teillä on mahdollisuus tilata WhatsAppin kautta suunnitelmia, lastenvaatteita ja mitä tahansa muuta mitä haluatte.", en:"You also have the option to order via WhatsApp designs, children’s clothes, and anything else you have in mind." },
+    { fa:"و در بین 2 تا 3 هفته در سراسر اروپا بدون کدام حضینه اضافه دریافت کنین", fi:"Ja 2–3 viikossa saatte ne kaikkialla Euroopassa ilman lisäkuluja.", en:"And you will receive them within 2 to 3 weeks across Europe without any extra cost." },
+    { fa:"تشکرم سیر زیاد است", fi:"Kiitos paljon.", en:"Thank you very much." }
+  ];
+
+  const video = document.getElementById("nadiyaVideo");
+  const faEl = document.querySelector(".subs .fa");
+  const fiEl = document.querySelector(".subs .fi");
+  const enEl = document.querySelector(".subs .en");
+
+  let total = 30;       // fallback-kesto
+  let slot = total / lines.length;
+  let currentIndex = -1;
+
+  function buildTiming(){
+    const d = (isFinite(video.duration) && video.duration > 0) ? video.duration : 30;
+    total = d;
+    slot  = total / lines.length;
+  }
+
+  function indexForTime(t){
+    // varmistetaan 0..len-1
+    let idx = Math.floor(t / slot);
+    if (idx < 0) idx = 0;
+    if (idx >= lines.length) idx = lines.length - 1;
+    return idx;
+  }
+
+  function setTexts(idx){
+    const cue = lines[idx];
+    faEl.textContent = cue.fa;
+    fiEl.textContent = cue.fi;
+    enEl.textContent = cue.en;
+  }
+
+  function onTick(){
+    const t = video.currentTime || 0;
+    const idx = indexForTime(t);
+    if (idx !== currentIndex){
+      currentIndex = idx;
+      // Päivitys ilman fadea -> ei välkyntää
+      setTexts(idx);
+    }
+  }
+
+  // Alustukset
+  video.addEventListener("loadedmetadata", () => {
+    buildTiming();
+    currentIndex = -1;
+    setTexts(0);
+  });
+
+  // Fallback jos metadataa ei tule jostain syystä
+  if (isNaN(video.duration) || !isFinite(video.duration)) {
+    buildTiming();
+    setTexts(0);
+  }
+
+  video.addEventListener("timeupdate", onTick);
+  video.addEventListener("seeked", onTick);
+  video.addEventListener("play", onTick);
+})();
+</script>
+
+
+
+
+
+
+
     <section id="tietoja" class="section about">
   <div class="about-text">
     <h2>Tietoja minusta / About me / در باره من</h2>
