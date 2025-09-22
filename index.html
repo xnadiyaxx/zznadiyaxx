@@ -270,12 +270,19 @@ Together we will awaken the beauty and splendor of Afghanistan in your everyday 
     </section>
 	
 	<!-- ===================== INTRO / BELOW PRODUCTS ===================== -->
+	<!-- =============================================================================================================== -->	
 
-<!-- DARI / FA-AF -->
-<section class="intro" lang="fa-AF" dir="rtl" aria-labelledby="intro-fa-title">
-  <h1 id="intro-fa-title">روسری‌، دامن‌، زیورآلات افغانی و لباس‌های ملی</h1>
-  <h2>الهام برای جوانان، پِنکّاری و جشن‌های فارغ‌التحصیلی</h2>
-  <p>
+
+	
+<!-- =============================================================================================================== -->	
+	<!-- ===================== INTRO BOX / BELOW PRODUCTS ===================== -->
+<div class="intro-box">
+  
+  <!-- DARI / FA-AF -->
+  <section class="intro" lang="fa-AF" dir="rtl" aria-labelledby="intro-fa-title">
+    <h1 id="intro-fa-title">روسری‌، دامن‌، زیورآلات افغانی و لباس‌های ملی</h1>
+    <h2>الهام برای جوانان، پِنکّاری و جشن‌های فارغ‌التحصیلی</h2>
+    <p>
     در Nadiya Boutique ما روی <strong>روسری‌های دست‌دوز</strong>، <strong>دامن‌های سنتی و مدرن</strong>،
     <strong>زیورآلات افغانی</strong> و <strong>لباس‌های ملی</strong> تمرکز داریم—انتخابی عالی برای
     <strong>جوانان</strong>، مناسبت‌های رسمی و <strong>پِنکّاری</strong> (جشن دانش‌آموزان سال آخر).
@@ -293,13 +300,13 @@ Together we will awaken the beauty and splendor of Afghanistan in your everyday 
     <li>زیورآلات افغانی دست‌ساز؛ گردنبند، گوشواره و ست کامل</li>
     <li>لباس‌های ملی و قطعات مکمل برای رویدادهای فرهنگی</li>
   </ul>
-</section>
+  </section>
 
-<!-- SUOMI -->
-<section class="intro" lang="fi" aria-labelledby="intro-fi-title">
-  <h1 id="intro-fi-title">Huivit, hameet, afgaanikorut ja kansallispuvut</h1>
-  <h2>Inspiraatiota nuorisolle, penkkareihin ja juhlapukeutumiseen</h2>
-  <p>
+  <!-- SUOMI -->
+  <section class="intro" lang="fi" aria-labelledby="intro-fi-title">
+    <h1 id="intro-fi-title">Huivit, hameet, afgaanikorut ja kansallispuvut</h1>
+    <h2>Inspiraatiota nuorisolle, penkkareihin ja juhlapukeutumiseen</h2>
+    <p>
     Nadiya Boutique kokoaa yhteen <strong>käsintehdyt huivit</strong>, <strong>hameet</strong>,
     <strong>afgaanikorut</strong> ja <strong>kansallispuvut</strong>. Mallistomme on suunniteltu
     <strong>nuorison</strong> tarpeisiin—myös <strong>penkkareihin</strong> ja ylioppilasjuhliin—sekä
@@ -317,13 +324,13 @@ Together we will awaken the beauty and splendor of Afghanistan in your everyday 
     <li>Afgaanikorut: käsintehtyjä kaulakoruja, korvakoruja ja settejä</li>
     <li>Kansallispuku & perinnepukeutuminen: ajattomia kokonaisuuksia</li>
   </ul>
-</section>
+  </section>
 
-<!-- ENGLISH -->
-<section class="intro" lang="en" aria-labelledby="intro-en-title">
-  <h1 id="intro-en-title">Scarves, Skirts, Afghan Jewelry & National Costumes</h1>
-  <h2>Style ideas for youth, graduation carnivals and festive wear</h2>
-  <p>
+  <!-- ENGLISH -->
+  <section class="intro" lang="en" aria-labelledby="intro-en-title">
+    <h1 id="intro-en-title">Scarves, Skirts, Afghan Jewelry & National Costumes</h1>
+    <h2>Style ideas for youth, graduation carnivals and festive wear</h2>
+    <p>
     At Nadiya Boutique we curate <strong>handcrafted scarves</strong>, <strong>skirts</strong>,
     <strong>Afghan jewelry</strong> and <strong>national costumes</strong>. Our selection works
     beautifully for <strong>youth</strong> looks—including Finland’s <strong>Penkkarit</strong> celebrations
@@ -340,21 +347,44 @@ Together we will awaken the beauty and splendor of Afghanistan in your everyday 
     <li>Afghan jewelry: handcrafted necklaces, earrings and matching sets</li>
     <li>National costume & heritage wear: timeless combinations</li>
   </ul>
-</section>
+  </section>
 
-<!-- (valinnainen kevyt tyyli) -->
+</div>
+
+<!-- TYYLI -->
 <style>
-  .intro { max-width: 1100px; margin: 1.5rem auto; padding: 0 1.25rem; }
-  .intro h1 { margin: .2rem 0 .4rem; font-size: clamp(1.35rem, 1.9vw, 1.8rem); }
-  .intro h2 { margin: 0 0 .6rem; font-weight: 600; font-size: clamp(1.05rem, 1.6vw, 1.25rem); opacity: .9; }
-  .intro p { margin: .6rem 0; line-height: 1.6; }
-  .intro ul { margin: .6rem 0 1rem 1.2rem; }
-  .intro[dir="rtl"] ul { margin-left: 0; margin-right: 1.2rem; }
-  .intro strong { font-weight: 600; }
+  .intro-box {
+    max-width: 1100px;
+    margin: 2rem auto;
+    padding: 1rem 1.25rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fafafa;
+    font-size: 0.9rem;       /* pienempi fonttikoko */
+    line-height: 1.5;
+  }
+
+  .intro-box h1 {
+    margin: .4rem 0 .3rem;
+    font-size: 1.1rem;       /* pienennetty */
+    font-weight: 600;
+  }
+
+  .intro-box h2 {
+    margin: 0 0 .5rem;
+    font-size: 0.95rem;      /* pienennetty */
+    font-weight: 500;
+    opacity: .85;
+  }
+
+  .intro-box p { margin: .4rem 0; }
+  .intro-box ul { margin: .4rem 0 1rem 1.2rem; }
+  .intro-box[dir="rtl"] ul { margin-left: 0; margin-right: 1.2rem; }
+  .intro-box strong { font-weight: 200; }
 </style>
+
 	
-	
-	
+<!-- =============================================================================================================== -->		
 
     <section id="yhteys" class="section">
       <h2>Yhteys / Contact / تماس</h2>
