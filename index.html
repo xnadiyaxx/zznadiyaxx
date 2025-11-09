@@ -92,18 +92,18 @@
 
 
 
-<!-- Video section and notice that this is html+css+JS -->
-
+<!-- Video section (full-width video + full-width subtitles) -->
+<!-- Video section (full-width video + full-width subtitles) -->
 <section class="video-section">
-  <!-- Pieni kontti vain videolle -->
+  <!-- Full-width video -->
   <div class="media">
     <video id="nadiyaVideo" class="nadiya-video" controls playsinline>
-      <source src="./nadiya.mp4" type="video/mp4" />
+      <source src="./nadiya_2.MP4" type="video/mp4" />
       Your browser does not support the video tag.
     </video>
   </div>
 
-  <!-- Leveämpi kontti tekstityksille -->
+  <!-- Full-width subtitles -->
   <div class="subs">
     <p class="fa" dir="rtl" lang="fa"></p>
     <p class="fi" lang="fi"></p>
@@ -112,72 +112,68 @@
 </section>
 
 <style>
-/* Yleisasettelu */
+/* Full-width layout for both video and text */
 .video-section{
-  max-width: 1200px;
-  margin: 2rem auto;
-  padding: 0 1rem;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0;              /* voit lisätä esim. padding: 1rem; jos haluat ilmaa reunoihin */
   box-sizing: border-box;
 }
 
-/* VIDEO: pieni ja keskellä */
+/* VIDEO: full width */
 .video-section .media{
-  width: 20%;  /* tweak between 25–40% — depends on whether you like slim or wide videos */
-  margin: 0 auto 1rem;
+  width: 100%;
+  margin: 0;               /* ennen: 0 auto 1rem auto */
 }
 .nadiya-video{
   width: 100%;
   height: auto;
+  display: block;
   border-radius: 12px;
   box-shadow: 0 6px 16px rgba(0,0,0,.12);
-  display: block;
 }
 
-/* TEKSTI: leveämpi kuin video */
+/* TEXT: full width */
 .subs{
-  max-width: 80%;     /* adjust freely (80–100%) — just don’t break the internet */
-  margin: 0 auto;
-  padding: 1rem 1.2rem;
-  background: rgba(255,255,255,0.95);
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  min-height: 4.5rem;
+  width: 100%;
+  margin: -0.25rem auto 0; /* pieni neg. marginaali vetää lähemmäs videota */
+  padding: .5rem .8rem;    /* tiiviimpi padding */
+  background: rgba(255,255,255,0.96);
+  border-top: 1px solid #e5e7eb;
+  box-sizing: border-box;
 }
 .subs p{
-  margin: .12rem 0;
-  line-height: 1.5;
-  text-align: center;
+  margin: 0;               /* poista ylioletetut marginaalit */
+  line-height: 1.35;       /* tiiviimpi riviväli */
+  text-align: center;      /* <<< KESKITTÄÄ TEKSTIN */
 }
-.subs p.fa{ font-size: 1.2rem; font-weight: 600; }
-.subs p.fi, .subs p.en{ font-size: 1rem; color: #1f2937; }
+.subs p.fa{ font-size: 1.12rem; font-weight: 600; }
+.subs p.fi, .subs p.en{ font-size: .98rem; }
 
-/* Mobiili: video isommaksi, teksti täysleveäksi */
+/* Mobile adjustments */
 @media (max-width: 720px){
-  .video-section .media{ width: 85%; }
-  .subs{ max-width: 100%; }
-  .subs p.fa{ font-size: 1.05rem; }
-  .subs p.fi, .subs p.en{ font-size: .95rem; }
+  .subs p.fa{ font-size: 1.06rem; }
+  .subs p.fi, .subs p.en{ font-size: .96rem; }
 }
 </style>
 
-
-
 <script>
 (function(){
+  // Persian + Finnish + English lines (split to balanced cues)
   const lines = [
-    { fa:"سلام امید است که جور و صحت من باشین", fi:"Hei, toivon että voitte hyvin ja olette terveitä.", en:"Hello, I hope you are well and healthy." },
-    { fa:"خوش آمدید میگم عزیزانی را که نو مرا فالو کردن", fi:"Toivotan tervetulleiksi rakkaat ystävät, jotka ovat juuri alkaneet seurata minua.", en:"I warmly welcome the dear ones who have just started following me." },
-    { fa:"تشکر بسیار زیاد از حمایت تان", fi:"Kiitos todella paljon tuestanne.", en:"Thank you very much for your support." },
-    { fa:"همچنان از دوستان کتابه امروز همرای ما بودن و بر من لطف می روانی داشتن تشکر", fi:"Samoin kiitos ystäville, jotka olivat tänään kanssamme ja osoittivat minulle ystävällisyyttä.", en:"Also, thanks to the friends who were with us today and showed me kindness." },
-    { fa:"و کمی معلومات به عزیزایی که نو استن", fi:"Ja vähän tietoa uusille rakkaille ystäville.", en:"And some information for the dear ones who are new." },
-    { fa:"عزیزان تمامی سفرشات شما از طریق واتس اپ سبت میشه", fi:"Rakkaat, kaikki tilauksenne kirjataan WhatsAppin kautta.", en:"Dear ones, all your orders are registered through WhatsApp." },
-    { fa:"که نمبر در انستاگرام ما و اطیتاک ما می باشه", fi:"Numero löytyy meidän Instagramistamme ja TikTokistamme.", en:"The number is available on our Instagram and TikTok." },
-    { fa:"همچنان من در استوری می مانم که دست رسی برتون راحت ب", fi:"Lisäksi laitan sen myös Storyyn, jotta pääsette siihen helposti.", en:"I will also put it in my Story so that you can access it easily." },
-    { fa:"و تمامی سفرشای شما در بین 3 تا 5 روز در سراسر اروپا میرسد", fi:"Kaikki tilauksenne saapuvat 3–5 päivän kuluessa kaikkialla Euroopassa.", en:"All your orders will arrive within 3 to 5 days across Europe." },
-    { fa:"و ارسالهای ما رایگان است و کدام حضینه اضافه در سراسر اروپا شما نمی آید", fi:"Lähetyksemme ovat ilmaisia, eikä lisäkuluja tule missään Euroopassa.", en:"Our deliveries are free, and you will not have any extra costs anywhere in Europe." },
-    { fa:"همچنان شما امکانی از ایراد دارین که دیزاین ها و گلوهای تفلانه و هر چیزهایی که در نظر دارین ها در واتساب سفرش کنین", fi:"Lisäksi teillä on mahdollisuus tilata WhatsAppin kautta suunnitelmia, lastenvaatteita ja mitä tahansa muuta mitä haluatte.", en:"You also have the option to order via WhatsApp designs, children’s clothes, and anything else you have in mind." },
-    { fa:"و در بین 2 تا 3 هفته در سراسر اروپا بدون کدام حضینه اضافه دریافت کنین", fi:"Ja 2–3 viikossa saatte ne kaikkialla Euroopassa ilman lisäkuluja.", en:"And you will receive them within 2 to 3 weeks across Europe without any extra cost." },
-    { fa:"تشکرم سیر زیاد است", fi:"Kiitos paljon.", en:"Thank you very much." }
+    { fa:"سلام.", fi:"Hei.", en:"Hello." },
+    { fa:"نادیا هستم.", fi:"Olen Nadiya.", en:"I am Nadiya." },
+    { fa:"خوش آمدید به صفحه ما.", fi:"Tervetuloa sivullemme.", en:"Welcome to our page." },
+    { fa:"اینجا تنها یک فروشگاه کالای افغانستانی نیستک.", fi:"Tämä ei ole vain afganistanilaisten tuotteiden kauppa.", en:"This is not just a store of Afghan goods." },
+    { fa:"نماینده کوچک هستم از هنرهای بزرگ زنان سرزمین ام افغانستان.", fi:"Olen pieni edustaja maani Afganistanin naisten suuresta taiteesta.", en:"I am a small representative of the great art of the women of my homeland, Afghanistan." },
+    { fa:"زنانی که در سایه نادالتی با سوزن و تارهایشان هنرشان را فریات میزنند.", fi:"Naiset, jotka epäoikeudenmukaisuuden varjossa huutavat taiteensa neulalla ja langoillaan.", en:"Women who, under the shadow of injustice, cry out their art with needles and threads." },
+    { fa:"و استقلال خودشان را حفظ میکند.", fi:"Ja he säilyttävät itsenäisyytensä.", en:"And they preserve their independence." },
+    { fa:"بیایید هر یک نماینده باشیم با نمایش گزاشتن هنر این زنان قهرمان.", fi:"Olkaamme kukin edustaja tuomalla esiin näiden sankarinaisten taidetta.", en:"Let each of us be a representative by showcasing the art of these heroic women." },
+    { fa:"ما هر یک شاید وظیفه داشته باشیم در قوال حمایت از این هنر.", fi:"Meillä jokaisella voi olla velvollisuus tukea tätä taidetta.", en:"Each of us may have a duty to support this art." },
+    { fa:"لباس افغانستانی تنها یک پوشاک نیست.", fi:"Afganistanilainen puku ei ole vain vaate.", en:"Afghan clothing is not just apparel." },
+    { fa:"جلوهی از شکوح، اصالت و فرحنگ افغانستان است.", fi:"Se on heijastus Afganistanin loistosta, aitoudesta ja kulttuurista.", en:"It is a reflection of Afghanistan’s splendor, authenticity, and culture." },
+    { fa:"بیایید با پوشیدن هر لباس سنتی افغانستانی شکوح و فرحنگ افغانستان را برای جهانیان به نمایش بگذاریم.", fi:"Tuodaan Afganistanin loisto ja kulttuuri esiin maailmalle pukeutumalla perinteisiin afganistanilaisiin asuihin.", en:"Let us showcase Afghanistan’s splendor and culture to the world by wearing traditional Afghan garments." },
+    { fa:"تشکر از این که ما را حمایت میکنین و همراه ما هستین.", fi:"Kiitos, että tuette meitä ja olette mukanamme.", en:"Thank you for supporting us and being with us." }
   ];
 
   const video = document.getElementById("nadiyaVideo");
@@ -185,18 +181,17 @@
   const fiEl = document.querySelector(".subs .fi");
   const enEl = document.querySelector(".subs .en");
 
-  let total = 30;       // fallback-kesto
+  let total = 95;                 // fallback if metadata not available (1:35)
   let slot = total / lines.length;
   let currentIndex = -1;
 
   function buildTiming(){
-    const d = (isFinite(video.duration) && video.duration > 0) ? video.duration : 30;
+    const d = (isFinite(video.duration) && video.duration > 0) ? video.duration : total;
     total = d;
     slot  = total / lines.length;
   }
 
   function indexForTime(t){
-    // varmistetaan 0..len-1
     let idx = Math.floor(t / slot);
     if (idx < 0) idx = 0;
     if (idx >= lines.length) idx = lines.length - 1;
@@ -215,19 +210,17 @@
     const idx = indexForTime(t);
     if (idx !== currentIndex){
       currentIndex = idx;
-      // Päivitys ilman fadea -> ei välkyntää
-      setTexts(idx);
+      setTexts(idx);   // update only on line change -> no flicker
     }
   }
 
-  // Alustukset
   video.addEventListener("loadedmetadata", () => {
     buildTiming();
     currentIndex = -1;
     setTexts(0);
   });
 
-  // Fallback jos metadataa ei tule jostain syystä
+  // Fallback init if metadata not ready
   if (isNaN(video.duration) || !isFinite(video.duration)) {
     buildTiming();
     setTexts(0);
@@ -238,6 +231,87 @@
   video.addEventListener("play", onTick);
 })();
 </script>
+
+
+
+
+
+<!-- LIITÄ TÄMÄ HETI VIDEO-OSION JÄLKEEN -->
+<section class="contact-block" aria-labelledby="contactTitle">
+  <h3 id="contactTitle" class="visually-hidden">Contact phone</h3>
+
+  <figure class="phone-figure">
+    <img
+      src="./images/phone-number.png"
+      alt="Phone number image"
+      width="420" height="70"
+      decoding="async" loading="lazy"
+      draggable="false"
+    />
+  </figure>
+
+  <div class="contact-texts">
+    <p class="fa" dir="rtl" lang="fa">
+      می‌توانید برای دریافت اطلاعات بیشتر یا ثبت سفارش با این شماره تماس بگیرید.
+    </p>
+    <p class="fi" lang="fi">
+      Voit soittaa tähän numeroon kysyäksesi lisää tietoa tai tehdäksesi tilauksen.
+    </p>
+    <p class="en" lang="en">
+      You can call this number to ask for more information or to place an order.
+    </p>
+  </div>
+</section>
+
+<style>
+/* Contact block */
+.contact-block{
+  max-width: 1200px;
+  margin: 1.5rem auto 0;
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+.phone-figure{
+  display: flex;
+  justify-content: center;
+  margin: 0 0 .5rem 0;
+}
+.phone-figure img{
+  max-width: 420px;   /* skaalaa tarvittaessa */
+  width: 100%;
+  height: auto;
+  user-select: none;
+  pointer-events: none;     /* vaikeuttaa kuvan klikkailua/vedä-ja-pudota */
+  -webkit-user-drag: none;
+}
+.contact-texts{
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+.contact-texts p{ margin: .2rem 0; line-height: 1.55; }
+.contact-texts .fa{ font-weight: 600; font-size: 1.1rem; }
+.contact-texts .fi, .contact-texts .en{ font-size: 1rem; color: #1f2937; }
+
+/* A11Y: visually hidden heading for screen readers */
+.visually-hidden{
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0);
+  white-space: nowrap; border: 0;
+}
+
+/* Mobiili */
+@media (max-width: 520px){
+  .contact-texts .fa{ font-size: 1.05rem; }
+  .contact-texts .fi, .contact-texts .en{ font-size: .95rem; }
+}
+</style>
+
+
+
+
 
 <!-- In the About section, we see the portrait of a woman whose beauty, artistic soul, and intelligence shine through every detail. -->
     <section id="tietoja" class="section about">
