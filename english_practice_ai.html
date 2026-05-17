@@ -1,0 +1,792 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>English Practice – Speak Your Answer</title>
+  <style>
+    :root{--ink:#e5e7eb;--muted:#9ca3af;--accent:#60a5fa;--ok:#34d399;--warn:#f59e0b;--err:#f87171;--info:#38bdf8;--ai:#a78bfa}
+    html,body{min-height:100%;margin:0}
+    body{font-family:system-ui,-apple-system,sans-serif;background:linear-gradient(180deg,#0b1220,#0e1528 30%,#0b1220);color:var(--ink);padding:16px;-webkit-text-size-adjust:100%}
+    .wrap{width:min(860px,100%);margin:0 auto;background:rgba(17,24,39,.92);border:1px solid #1f2937;border-radius:20px;padding:18px}
+    h1{margin:0 0 4px;font-size:1.2rem;font-weight:700}
+    .sub{color:var(--muted);font-size:.83rem;margin:0 0 14px;line-height:1.5}
+
+    /* API key setup box */
+    .apibox{background:#1e1b4b;border:1px solid #4c1d95;border-radius:14px;padding:14px;margin-bottom:14px}
+    .apibox p{margin:0 0 8px;font-size:.88rem;color:#c4b5fd;line-height:1.5}
+    .apibox input{width:100%;box-sizing:border-box;background:#0b1220;border:1px solid #4c1d95;color:var(--ink);border-radius:10px;padding:10px;font-size:.9rem;font-family:monospace}
+    .apibox input:focus{outline:none;border-color:var(--accent)}
+    .apibox button{margin-top:8px;background:#7c3aed;border:none;color:#fff;border-radius:10px;padding:9px 18px;font-size:.9rem;font-weight:700;cursor:pointer}
+    .api-status{font-size:.82rem;margin-top:6px;min-height:18px}
+    .api-ok{color:var(--ok)}.api-err{color:var(--err)}
+
+    .tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+    .tab{background:#0b1220;border:1px solid #1f2937;color:var(--muted);border-radius:10px;padding:7px 12px;cursor:pointer;font-size:.85rem;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+    .tab.active{border-color:var(--accent);color:var(--accent)}
+    /* Special highlight for the AI tab */
+    .tab.ai-tab{border-color:#4c1d95;color:var(--ai)}
+    .tab.ai-tab.active{border-color:var(--ai);background:#1e1b4b}
+
+    .panel{background:#0b1220;border:1px solid #1f2937;border-radius:14px;padding:12px;margin-bottom:12px}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:5px 0}
+    select,input[type=range]{background:#0b1220;border:1px solid #1f2937;color:var(--ink);border-radius:10px;padding:8px 10px;font-size:.9rem}
+    label{font-size:.85rem;color:#cbd5e1;display:flex;align-items:center;gap:6px;cursor:pointer}
+
+    button{cursor:pointer;border-radius:12px;padding:13px 16px;border:1px solid #1f2937;background:#0b1220;color:var(--ink);font-size:.9rem;font-weight:600;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+    button:active{opacity:.75}
+    .bp{background:var(--accent);border-color:#3b82f6;color:#0b1220}
+    .bo{background:var(--ok);border-color:#10b981;color:#052e1f}
+    .bw{background:var(--warn);border-color:#d97706;color:#1f1302}
+    .bv{background:#7c3aed;border-color:#6d28d9;color:#fff;font-size:1rem;padding:15px 20px}
+    .bv.on{background:#dc2626;border-color:#b91c1c}
+
+    .qcard{background:#0f172a;border:1px solid #1f2937;border-radius:14px;padding:16px;margin-bottom:10px}
+    .stag{font-size:.78rem;color:var(--info);margin-bottom:4px}
+    .qnum{font-size:.8rem;color:var(--muted);margin-bottom:6px}
+    .qtext{font-size:1.15rem;font-weight:600;line-height:1.5}
+
+    /* iOS dictation box */
+    .dictation-box{display:none;margin-bottom:10px}
+    .dictation-box.show{display:block}
+    .dictation-hint{background:#1e1b4b;border:1px solid #4c1d95;border-radius:12px;padding:12px;font-size:.88rem;color:#c4b5fd;line-height:1.6;margin-bottom:8px}
+    .dictation-hint .big-mic{font-size:2rem;display:block;text-align:center;margin-bottom:6px}
+    #dictInput{width:100%;box-sizing:border-box;background:#0b1220;border:2px solid #4c1d95;color:var(--ink);border-radius:12px;padding:14px;font-size:1.05rem;font-family:inherit;resize:none;min-height:80px;line-height:1.5}
+    #dictInput:focus{outline:none;border-color:var(--accent)}
+    #dictInput::placeholder{color:#4b5563}
+    .dict-submit{width:100%;margin-top:8px;padding:15px;font-size:1rem;font-weight:700;border-radius:12px;background:var(--ok);border:none;color:#052e1f;cursor:pointer;touch-action:manipulation}
+    .dict-submit:active{opacity:.8}
+
+    /* Status box */
+    .sbox{border-radius:12px;padding:12px 14px;margin-bottom:10px;font-size:.9rem;line-height:1.5;display:none}
+    .sbox.show{display:block}
+    .sl{background:#1e1b4b;border:1px solid #4c1d95;color:#c4b5fd}
+    .sr{background:#0a1c14;border:1px solid #065f46;color:#6ee7b7}
+    .se{background:#1c0a0a;border:1px solid #7f1d1d;color:#fca5a5}
+
+    /* Word-diff feedback box */
+    .fb{border-radius:12px;padding:14px;margin-bottom:10px;display:none;line-height:1.8;font-size:.93rem}
+    .fb.show{display:block}
+    .fbg{background:#0a1c14;border:1px solid #065f46}
+    .fbm{background:#1c0f00;border:1px solid #78350f}
+    .w{display:inline-block;padding:2px 5px;border-radius:5px;margin:2px 1px}
+    .wo{color:#6ee7b7}.wm{background:#7f1d1d;color:#fca5a5;text-decoration:line-through}
+    .we{background:#1e3a5f;color:#93c5fd;font-style:italic}.ww{background:#78350f;color:#fcd34d}
+    .ca{margin-top:10px;padding:10px;background:#0b1220;border-radius:10px;color:#a3e635;font-size:.9rem}
+    .ys{margin-top:6px;font-size:.85rem;color:var(--muted)}
+
+    /* ── AI FEEDBACK BOX ─────────────────────────────────
+       Purple-themed box for Claude's intelligent commentary.
+       Shows a spinner while waiting for the API response.
+    ──────────────────────────────────────────────────────── */
+    .ai-box{background:#130d2e;border:1px solid #4c1d95;border-radius:14px;padding:16px;margin-bottom:12px;display:none}
+    .ai-box.show{display:block}
+    .ai-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:.85rem;color:var(--ai);font-weight:600}
+    .ai-header svg{width:18px;height:18px;fill:var(--ai)}
+    .ai-text{font-size:.95rem;line-height:1.7;color:#e2d9f3;white-space:pre-wrap}
+    /* Animated dots shown while Claude is thinking */
+    .ai-loading{display:flex;gap:5px;align-items:center;color:var(--ai);font-size:.88rem}
+    .ai-loading span{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--ai);animation:bounce .9s infinite}
+    .ai-loading span:nth-child(2){animation-delay:.2s}
+    .ai-loading span:nth-child(3){animation-delay:.4s}
+    @keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+    /* Button to have Claude read the feedback aloud */
+    .ai-speak-btn{margin-top:10px;background:#2d1b69;border:1px solid #4c1d95;color:#c4b5fd;border-radius:10px;padding:8px 14px;font-size:.85rem;cursor:pointer;display:none}
+    .ai-speak-btn.show{display:inline-block}
+
+    .prog{height:4px;background:#1f2937;border-radius:2px;margin-bottom:12px;overflow:hidden}
+    .progb{height:100%;background:var(--accent);border-radius:2px;transition:width .3s}
+    .leg{display:flex;gap:12px;flex-wrap:wrap;font-size:.8rem;margin-bottom:10px}
+    .leg span{display:flex;align-items:center;gap:4px}
+    .dot{width:10px;height:10px;border-radius:3px;display:inline-block}
+    .brow{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    .brow button{flex:1;min-width:110px}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>English Practice – Speak Your Answer</h1>
+  <p class="sub" id="modeLine">Ladataan...</p>
+
+  <!-- ── API KEY SETUP ───────────────────────────────────────
+       User pastes their Anthropic API key here once.
+       It is saved to localStorage so they don't need to
+       re-enter it every time they open the app.
+  ──────────────────────────────────────────────────────────── -->
+  <div class="apibox" id="apibox">
+    <p>🤖 <strong>Claude AI -palaute:</strong> Liitä Anthropic API-avaimesi alle. Se tallennetaan vain tähän selaimeen eikä lähde mihinkään muualle.</p>
+    <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-..." autocomplete="off" />
+    <button id="saveApiKey">💾 Tallenna avain</button>
+    <div class="api-status" id="apiStatus"></div>
+  </div>
+
+  <!-- Section tabs — "Arkipäivä" uses AI feedback, others use word-diff -->
+  <div class="tabs">
+    <button class="tab active" onclick="setSection('all',this)">Kaikki</button>
+    <button class="tab" onclick="setSection('morning',this)">🌅 Aamu</button>
+    <button class="tab" onclick="setSection('afternoon',this)">☀️ Iltapäivä</button>
+    <button class="tab" onclick="setSection('evening',this)">🌙 Ilta</button>
+    <button class="tab" onclick="setSection('oatmeal',this)">🥣 Puuro</button>
+    <button class="tab ai-tab" onclick="setSection('daily',this)">🤖 Arkipäivä (AI)</button>
+  </div>
+
+  <!-- Settings panel -->
+  <div class="panel">
+    <div class="row">
+      <label>Voice:</label>
+      <select id="voiceSel" style="flex:1;max-width:220px"></select>
+      <label>Nopeus:</label>
+      <input id="rate" type="range" min="0.7" max="1.1" value="0.85" step="0.05" style="width:80px" />
+      <span id="rateVal" style="font-size:.85rem;color:var(--muted);min-width:28px">0.85</span>
+    </div>
+    <div class="row" style="gap:14px">
+      <label><input type="checkbox" id="autoNext" checked /> Siirry seuraavaan automaattisesti (≥85%)</label>
+      <label><input type="checkbox" id="shuffle" /> Sekoita järjestys</label>
+    </div>
+  </div>
+
+  <div class="prog"><div class="progb" id="progb" style="width:0%"></div></div>
+
+  <!-- Question card -->
+  <div class="qcard">
+    <div class="stag" id="stag"></div>
+    <div class="qnum" id="qnum"></div>
+    <div class="qtext" id="qtext">Paina "Aloita harjoittelu" aloittaaksesi.</div>
+  </div>
+
+  <div class="sbox" id="sbox"></div>
+
+  <!-- iOS dictation textarea -->
+  <div class="dictation-box" id="dictBox">
+    <div class="dictation-hint">
+      <span class="big-mic">🎤</span>
+      Kirjoita vastauksesi — tai paina näppäimistön <strong>diktaationappia 🎤</strong> (alavasemmalla) ja puhu. Paina sitten <strong>Tarkista vastaus</strong>.
+    </div>
+    <textarea id="dictInput" placeholder="Kirjoita tai diktoi vastauksesi tähän..." rows="3"></textarea>
+    <button class="dict-submit" id="dictSubmit">✓ Tarkista vastaus</button>
+  </div>
+
+  <!-- Color legend (only shown for word-diff sections) -->
+  <div class="leg" id="legend">
+    <span><span class="dot" style="background:#6ee7b7"></span>Oikein</span>
+    <span><span class="dot" style="background:#fcd34d"></span>Väärä sana</span>
+    <span><span class="dot" style="background:#fca5a5"></span>Puuttuu</span>
+    <span><span class="dot" style="background:#93c5fd"></span>Extra</span>
+  </div>
+
+  <!-- Word-diff feedback (used for all sections except 'daily') -->
+  <div class="fb" id="fb"></div>
+
+  <!-- ── AI FEEDBACK BOX ─────────────────────────────────────
+       Shown only for the "Arkipäivä" (daily) section.
+       Claude reads the question, the user's answer, and the
+       model answer, then gives intelligent feedback in English.
+       The feedback can also be read aloud by clicking the
+       "🔊 Kuuntele palaute" button.
+  ──────────────────────────────────────────────────────────── -->
+  <div class="ai-box" id="aiBox">
+    <div class="ai-header">
+      <!-- Claude logo SVG icon -->
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+      Claude AI palaute
+    </div>
+    <!-- Loading animation while waiting for API response -->
+    <div class="ai-loading" id="aiLoading" style="display:none">
+      <span></span><span></span><span></span>
+      <span style="margin-left:6px;width:auto;height:auto;background:none;animation:none;border-radius:0">Claude miettii...</span>
+    </div>
+    <!-- The actual feedback text from Claude -->
+    <div class="ai-text" id="aiText"></div>
+    <!-- Button to have Claude's feedback read aloud -->
+    <button class="ai-speak-btn" id="aiSpeakBtn">🔊 Kuuntele palaute</button>
+  </div>
+
+  <div class="brow" id="brow"></div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ============================================================
+   QUESTION DATA
+   s = section, q = question spoken aloud, a = model answer.
+   The 'daily' section uses Claude AI for feedback instead of
+   the word-diff algorithm used by the other sections.
+============================================================ */
+const DATA=[
+  // ── Morning ──
+  {s:'morning',q:"How do you start your morning?",a:"I wake up slowly. I'm kinda tired at first but I know I gotta get up."},
+  {s:'morning',q:"What do you do after you wake up?",a:"I make my bed wash my face and tell myself I want to start this day calmly."},
+  {s:'morning',q:"What do you drink in the morning?",a:"I make coffee or tea and sit down quietly."},
+  {s:'morning',q:"Are you always wide awake in the morning?",a:"Sometimes I'm still sorta sleepy but that's okay."},
+  {s:'morning',q:"What do you tell yourself in the morning?",a:"I know I have to take care of myself before anything else."},
+  {s:'morning',q:"When do you study English in the morning?",a:"I check the time and think I'm gonna study English for a few minutes."},
+  {s:'morning',q:"Do you rush in the morning?",a:"I don't rush. Even five minutes is enough. Consistency matters."},
+  {s:'morning',q:"What do you do if you don't understand something?",a:"I just say I dunno I'll learn it later. I need to keep going step by step."},
+  {s:'morning',q:"What do you say before you start your day?",a:"Let me read one short sentence. Give me a moment I'm focusing."},
+  // ── Afternoon ──
+  {s:'afternoon',q:"How do you feel in the afternoon?",a:"In the afternoon I sometimes feel kinda tired especially after lunch."},
+  {s:'afternoon',q:"Why do you need to stay focused?",a:"I know I gotta stay focused because I have to finish my tasks before the day ends."},
+  {s:'afternoon',q:"What do you do when you want a short break?",a:"I make some tea or go outside for a walk."},
+  {s:'afternoon',q:"What do you do if you're out of time?",a:"If I'm out of time I just listen to English for a few minutes."},
+  {s:'afternoon',q:"How do you handle your emails?",a:"I tell myself I gotta answer the important ones first."},
+  {s:'afternoon',q:"What do you say when you don't understand something?",a:"I just say I don't know I need to read it again."},
+  {s:'afternoon',q:"How long do you plan to study English in the afternoon?",a:"I'm gonna study English for at least ten minutes."},
+  {s:'afternoon',q:"What do you tell yourself when you're busy?",a:"I need to keep going even when I'm busy."},
+  {s:'afternoon',q:"What do you say when you want to take a walk?",a:"Let me listen to a podcast while I walk."},
+  {s:'afternoon',q:"How do co-workers talk at work?",a:"The language is often sorta informal. They might say don't you see the problem here."},
+  // ── Evening ──
+  {s:'evening',q:"How do you feel in the evening?",a:"I start to slow down. I'm usually out of energy and that's normal."},
+  {s:'evening',q:"What do you do to prepare for the night?",a:"I clean up a little and prepare for the night."},
+  {s:'evening',q:"What do you say about your day in the evening?",a:"I think about the day and say I did my best today."},
+  {s:'evening',q:"Do you push yourself hard in the evening?",a:"I know I gotta rest not push myself anymore."},
+  {s:'evening',q:"What do you do before bed?",a:"I'm gonna do something peaceful. Maybe I read a few lines in English or listen to a calm video."},
+  {s:'evening',q:"What do you say when your mind is busy?",a:"Let me breathe for a moment."},
+  {s:'evening',q:"How do you study English in the evening?",a:"I just listen or repeat softly."},
+  {s:'evening',q:"What do you say when you forget something?",a:"If I forget something it's okay. I'll learn it tomorrow. No stress."},
+  {s:'evening',q:"How do you end the day?",a:"I end the day with gratitude. I whisper good night I'll see you tomorrow."},
+  // ── Oatmeal ──
+  {s:'oatmeal',q:"How do you start making oatmeal?",a:"First I'm going to pour some water in a pot and put it on the stove."},
+  {s:'oatmeal',q:"When do you add the oats?",a:"I wait till it starts bubbling then I'm gonna add the oats slowly."},
+  {s:'oatmeal',q:"What do you do so the oatmeal doesn't stick?",a:"Let me stir it so it doesn't stick."},
+  {s:'oatmeal',q:"What do you do after adding the oats?",a:"I'm gonna lower the heat and let it cook. I stir it every now and then."},
+  {s:'oatmeal',q:"How does the oatmeal look when it's ready?",a:"When it gets thick it's ready. It looks kinda soft and creamy."},
+  {s:'oatmeal',q:"What do you do when the oatmeal is ready?",a:"I turn the stove off. I scoop it into a bowl and spread it a little."},
+  {s:'oatmeal',q:"What can you add to your oatmeal?",a:"Maybe I'll add butter or berries. Now it's ready to eat."},
+  // ── Daily expressions (AI section) ──
+  // These use Claude AI for feedback instead of word-diff.
+  // The 'a' field is a model answer shown to Claude for reference.
+  {s:'daily',q:"How are you doing?",a:"I'm doing pretty well, thanks! How about you?"},
+  {s:'daily',q:"What's up?",a:"Not much, just hanging out. What about you?"},
+  {s:'daily',q:"How was your day?",a:"It was pretty good, thanks for asking! Kinda busy but okay."},
+  {s:'daily',q:"Did you sleep well?",a:"Yeah, I slept pretty well. I feel kinda rested today."},
+  {s:'daily',q:"What are you up to today?",a:"I'm gonna take it easy today. Maybe go for a walk or listen to some music."},
+  {s:'daily',q:"Are you hungry?",a:"Yeah, I'm kinda hungry. I think I'm gonna make something to eat."},
+  {s:'daily',q:"Do you want some coffee?",a:"Sure, I'd love some! Thanks a lot."},
+  {s:'daily',q:"What do you feel like doing today?",a:"I feel like taking a short walk and maybe reading a little."},
+  {s:'daily',q:"How's the weather today?",a:"It's kinda cloudy but not too cold. Pretty okay I think."},
+  {s:'daily',q:"Are you ready to go?",a:"Almost! Give me a moment, I'll be ready in a sec."},
+  {s:'daily',q:"Did you eat breakfast?",a:"Yeah, I had some oatmeal. It keeps me going in the morning."},
+  {s:'daily',q:"Can you help me with something?",a:"Sure, I'd be happy to help! What do you need?"},
+  {s:'daily',q:"What time is it?",a:"I'm not sure, let me check. I think it's around noon."},
+  {s:'daily',q:"Do you have any plans for the weekend?",a:"Not really, I'm just gonna relax and take it easy."},
+  {s:'daily',q:"How long have you been learning English?",a:"I've been learning for a few years. I'm still working on it but I keep going."},
+];
+
+const SN={morning:'Aamu',afternoon:'Iltapäivä',evening:'Ilta',oatmeal:'Puuro',daily:'Arkipäivä (AI)'};
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+const isIOS=/iP(hone|ad|od)/i.test(navigator.userAgent);
+
+document.getElementById('modeLine').textContent = isIOS
+  ? '📱 iPhone-tila: Kuuntele kysymys → diktoi tai kirjoita vastaus → saa palaute'
+  : '🖥 Tietokoneen tila: Kuuntele kysymys → puhu vastaus mikrofoniin → saa palaute';
+
+let voices=[], items=[], idx=0, rec=null, listening=false, curSection='all';
+let apiKey='', lastAiFeedback=''; // Store AI feedback text for TTS playback
+
+/* ── API KEY MANAGEMENT ─────────────────────────────────────
+   Load saved key from localStorage on startup.
+   When the user saves a new key, store it and show confirmation.
+──────────────────────────────────────────────────────────── */
+function loadApiKey(){
+  const saved=localStorage.getItem('anthropic_api_key')||'';
+  if(saved){
+    apiKey=saved;
+    document.getElementById('apiKeyInput').value=saved;
+    document.getElementById('apiStatus').className='api-status api-ok';
+    document.getElementById('apiStatus').textContent='✅ API-avain tallennettu ja valmis käyttöön.';
+  }
+}
+loadApiKey();
+
+document.getElementById('saveApiKey').addEventListener('click',()=>{
+  const val=document.getElementById('apiKeyInput').value.trim();
+  if(!val.startsWith('sk-ant-')){
+    document.getElementById('apiStatus').className='api-status api-err';
+    document.getElementById('apiStatus').textContent='❌ Avain näyttää väärältä. Sen pitäisi alkaa sk-ant-...';
+    return;
+  }
+  apiKey=val;
+  localStorage.setItem('anthropic_api_key',val);
+  document.getElementById('apiStatus').className='api-status api-ok';
+  document.getElementById('apiStatus').textContent='✅ Tallennettu! Claude AI on nyt käytössä Arkipäivä-osiossa.';
+});
+
+/* ── VOICE LOADING ──────────────────────────────────────────
+   Load and sort TTS voices, preferring US English voices
+   like Samantha or Ava.
+──────────────────────────────────────────────────────────── */
+const voiceSel=document.getElementById('voiceSel');
+const rateInp=document.getElementById('rate');
+const rateValEl=document.getElementById('rateVal');
+rateInp.addEventListener('input',()=>rateValEl.textContent=Number(rateInp.value).toFixed(2));
+
+function loadVoices(){
+  const v=speechSynthesis.getVoices();
+  if(!v.length)return false;
+  voices=v;
+  voiceSel.innerHTML='';
+  const pool=v.filter(x=>/^en/i.test(x.lang));
+  pool.sort((a,b)=>{
+    const sc=x=>{let s=0;if(/en-US/i.test(x.lang))s+=2;if(/(samantha|ava|allison|aria|jenny)/i.test(x.name))s+=2;return s;};
+    return sc(b)-sc(a);
+  });
+  pool.forEach(x=>{const o=document.createElement('option');o.value=x.name;o.textContent=`${x.name} (${x.lang})`;voiceSel.appendChild(o);});
+  for(const n of['Samantha','Ava','Allison','Microsoft Aria','Google US English']){
+    const h=pool.find(x=>x.name.includes(n));if(h){voiceSel.value=h.name;break;}
+  }
+  return true;
+}
+speechSynthesis.onvoiceschanged=loadVoices;
+loadVoices();
+
+function speak(text){
+  return new Promise(res=>{
+    speechSynthesis.cancel();
+    setTimeout(()=>{
+      loadVoices();
+      const u=new SpeechSynthesisUtterance(text);
+      u.rate=Number(rateInp.value);u.pitch=1.05;u.volume=1.0;
+      const ch=voices.find(x=>x.name===voiceSel.value)||voices.find(x=>/en-US/i.test(x.lang))||voices[0];
+      if(ch)u.voice=ch;
+      u.onend=res;u.onerror=()=>res();
+      speechSynthesis.speak(u);
+    },80);
+  });
+}
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+/* ── SECTION TABS ───────────────────────────────────────────
+   Show/hide the color legend and AI box depending on section.
+   The 'daily' section uses AI feedback; others use word-diff.
+──────────────────────────────────────────────────────────── */
+window.setSection=function(s,el){
+  curSection=s;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  // Show legend only for non-AI sections
+  document.getElementById('legend').style.display=s==='daily'?'none':'flex';
+};
+
+function buildItems(){
+  items=curSection==='all'?[...DATA]:DATA.filter(x=>x.s===curSection);
+  if(document.getElementById('shuffle').checked)
+    items=items.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(v=>v[1]);
+  idx=0;
+}
+
+/* ── UI HELPERS ─────────────────────────────────────────────*/
+function showS(msg,t){const b=document.getElementById('sbox');b.className=`sbox show s${t}`;b.innerHTML=msg;}
+function hideS(){document.getElementById('sbox').classList.remove('show');}
+function updProg(){document.getElementById('progb').style.width=items.length?Math.round((idx/items.length)*100)+'%':'0%';}
+
+function showQ(item){
+  document.getElementById('stag').textContent=SN[item.s];
+  document.getElementById('qnum').textContent=`${idx+1} / ${items.length}`;
+  document.getElementById('qtext').textContent=item.q;
+  document.getElementById('fb').classList.remove('show');
+  document.getElementById('aiBox').classList.remove('show');
+  document.getElementById('dictBox').classList.remove('show');
+  document.getElementById('dictInput').value='';
+  document.getElementById('aiSpeakBtn').classList.remove('show');
+  lastAiFeedback='';
+  hideS();updProg();
+}
+
+/* ── WORD DIFF (non-AI sections) ────────────────────────────
+   Normalize text and run LCS-based word comparison.
+──────────────────────────────────────────────────────────── */
+function norm(s){
+  return s.toLowerCase()
+    .replace(/['']/g,"'").replace(/[^a-z0-9'\s]/g,'')
+    .replace(/\b(i'm|i've|i'll|i'd|don't|doesn't|didn't|won't|can't|it's|that's|let's|gonna|gotta|kinda|sorta|dunno)\b/g,
+      w=>({'i\'m':'i am','i\'ve':'i have','i\'ll':'i will','i\'d':'i would','don\'t':'do not',
+        'doesn\'t':'does not','didn\'t':'did not','won\'t':'will not','can\'t':'cannot',
+        'it\'s':'it is','that\'s':'that is','let\'s':'let us','gonna':'going to',
+        'gotta':'got to','kinda':'kind of','sorta':'sort of','dunno':'do not know'}[w]||w))
+    .split(/\s+/).filter(Boolean);
+}
+function diffW(sp,cor){
+  const sw=norm(sp),cw=norm(cor),m=sw.length,n=cw.length;
+  const dp=Array.from({length:m+1},()=>new Array(n+1).fill(0));
+  for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)
+    dp[i][j]=sw[i-1]===cw[j-1]?dp[i-1][j-1]+1:Math.max(dp[i-1][j],dp[i][j-1]);
+  const res=[];let i=m,j=n;
+  while(i>0||j>0){
+    if(i>0&&j>0&&sw[i-1]===cw[j-1]){res.unshift({w:cw[j-1],t:'ok'});i--;j--;}
+    else if(j>0&&(i===0||dp[i][j-1]>=dp[i-1][j])){res.unshift({w:cw[j-1],t:'miss'});j--;}
+    else{res.unshift({w:sw[i-1],t:'ex'});i--;}
+  }
+  const mg=[];let ri=0;
+  while(ri<res.length){
+    if(res[ri].t==='ex'&&ri+1<res.length&&res[ri+1].t==='miss'){mg.push({w:res[ri].w,c:res[ri+1].w,t:'wr'});ri+=2;}
+    else{mg.push(res[ri]);ri++;}
+  }
+  const ok=mg.filter(x=>x.t==='ok').length;
+  return{mg,score:cw.length?Math.round((ok/cw.length)*100):0};
+}
+function renderFB(spoken,item){
+  const{mg,score}=diffW(spoken,item.a);
+  const fb=document.getElementById('fb');
+  fb.className='fb show '+(score>=85?'fbg':'fbm');
+  let h=score>=100?'<div style="color:#6ee7b7;font-weight:700;margin-bottom:8px">🎉 Täydellinen!</div>':
+    score>=70?`<div style="color:#fcd34d;font-weight:700;margin-bottom:6px">✓ Hyvä! ${score}% oikein</div>`:
+    `<div style="color:var(--err);font-weight:700;margin-bottom:6px">Harjoitellaan lisää — ${score}% oikein</div>`;
+  h+='<div style="line-height:2">';
+  for(const w of mg){
+    if(w.t==='ok')h+=`<span class="w wo">${w.w}</span>`;
+    else if(w.t==='miss')h+=`<span class="w wm">${w.w}</span>`;
+    else if(w.t==='ex')h+=`<span class="w we">${w.w}</span>`;
+    else h+=`<span class="w ww" title="oikein: ${w.c}">${w.w}</span>`;
+  }
+  h+=`</div><div class="ys">Sinä sanoit: <em style="color:#cbd5e1">"${spoken}"</em></div>`;
+  h+=`<div class="ca">✦ Oikea: "${item.a}"</div>`;
+  fb.innerHTML=h;return score;
+}
+
+/* ── CLAUDE AI FEEDBACK ─────────────────────────────────────
+   Sends the question, the user's answer, and the model answer
+   to the Anthropic API. Claude responds with friendly,
+   encouraging feedback in English — like a patient teacher.
+   The prompt instructs Claude to:
+   - Keep it short (2–4 sentences)
+   - Be encouraging and warm
+   - Point out what was good first
+   - Then gently note what could be improved
+   - Mention natural American English alternatives if relevant
+──────────────────────────────────────────────────────────── */
+async function getAiFeedback(question, userAnswer, modelAnswer){
+  if(!apiKey){
+    return'⚠️ API-avain puuttuu. Lisää se ylhäällä olevaan kenttään.';
+  }
+
+  const prompt=`You are a warm, encouraging American English teacher helping a Finnish adult learner practice everyday spoken English. The learner has dyslexia, so keep your feedback very simple, short, and positive.
+
+The learner was asked this question:
+"${question}"
+
+The model answer is:
+"${modelAnswer}"
+
+The learner answered:
+"${userAnswer}"
+
+Give friendly feedback in 2-4 short sentences. 
+- Start by saying something encouraging about what they got right.
+- Then gently point out any mistakes or missing words.
+- If they used formal English where informal American English would sound more natural, mention the casual version (like "gonna" instead of "going to").
+- End with a short word of encouragement.
+- Write in simple, clear English. Do not use bullet points or lists.`;
+
+  try{
+    const response=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':apiKey,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body:JSON.stringify({
+        model:'claude-sonnet-4-5',
+        max_tokens:300,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+
+    if(!response.ok){
+      const err=await response.json().catch(()=>({}));
+      if(response.status===401) return'❌ API-avain on virheellinen. Tarkista avain ja tallenna uudelleen.';
+      if(response.status===429) return'❌ Liian monta pyyntöä. Odota hetki ja yritä uudelleen.';
+      return`❌ Virhe: ${err.error?.message||response.status}`;
+    }
+
+    const data=await response.json();
+    return data.content?.[0]?.text||'(Ei vastausta)';
+
+  }catch(e){
+    return`❌ Verkkovirhe: ${e.message}`;
+  }
+}
+
+/* Show the AI feedback box with a loading spinner, then fill in Claude's response.
+   Also shows the user's own answer at the top of the box. */
+async function showAiFeedback(question, userAnswer, modelAnswer){
+  const box=document.getElementById('aiBox');
+  const loading=document.getElementById('aiLoading');
+  const textEl=document.getElementById('aiText');
+  const speakBtn=document.getElementById('aiSpeakBtn');
+
+  box.classList.add('show');
+  loading.style.display='flex';
+  // Show user's answer immediately while waiting for Claude
+  textEl.innerHTML=`<div style="margin-bottom:10px;padding:10px;background:#0b1220;border-radius:10px;border:1px solid #2d1b69">
+    <span style="font-size:.78rem;color:var(--ai)">Sinä sanoit:</span><br>
+    <span style="color:#e2d9f3;font-style:italic">"${userAnswer}"</span>
+  </div>`;
+  speakBtn.classList.remove('show');
+
+  const feedback=await getAiFeedback(question,userAnswer,modelAnswer);
+  lastAiFeedback=feedback;
+
+  loading.style.display='none';
+  // Keep user's answer at top, add Claude's feedback below
+  textEl.innerHTML=`<div style="margin-bottom:10px;padding:10px;background:#0b1220;border-radius:10px;border:1px solid #2d1b69">
+    <span style="font-size:.78rem;color:var(--ai)">Sinä sanoit:</span><br>
+    <span style="color:#e2d9f3;font-style:italic">"${userAnswer}"</span>
+  </div>
+  <div style="border-top:1px solid #2d1b69;padding-top:10px">${feedback}</div>`;
+
+  if(!feedback.startsWith('❌')&&!feedback.startsWith('⚠️')){
+    speakBtn.classList.add('show');
+  }
+  return feedback;
+}
+
+/* Read Claude's feedback aloud when the user taps the button */
+document.getElementById('aiSpeakBtn').addEventListener('click',()=>{
+  if(lastAiFeedback) speak(lastAiFeedback);
+});
+
+/* ── BUTTON SYSTEM ──────────────────────────────────────────
+   Dynamically build the action buttons for the current state.
+──────────────────────────────────────────────────────────── */
+function setBtns(cfg){
+  const defs={
+    start:   {l:'▶ Aloita harjoittelu',c:'bp'},
+    restart: {l:'▶ Aloita uudelleen',  c:'bp'},
+    speak:   {l:'🎤 Puhu nyt',          c:'bv'},
+    done:    {l:'✅ Vastaus valmis',     c:'bo'},
+    stopl:   {l:'🔴 Lopeta puhuminen',  c:'bv on'},
+    answer:  {l:'✏️ Kirjoita / Diktoi vastaus',c:'bv'},
+    skip:    {l:'⏭ Ohita',             c:''},
+    rq:      {l:'🔊 Toista kysymys',    c:''},
+    next:    {l:'→ Seuraava',           c:'bo'},
+    stop:    {l:'■ Lopeta',             c:'bw'},
+  };
+  const row=document.getElementById('brow');
+  row.innerHTML='';
+  for(const k of cfg){
+    const d=defs[k];const b=document.createElement('button');
+    b.id='b_'+k;b.textContent=d.l;b.className=d.c;
+    b.style.flex='1';b.style.minWidth='110px';
+    row.appendChild(b);
+  }
+  const on=(id,fn)=>{const el=document.getElementById('b_'+id);if(el)el.addEventListener('click',fn);};
+  on('start',  ()=>{buildItems();askQ();});
+  on('restart',()=>{buildItems();askQ();});
+  on('speak',  handleSpeak);
+  on('stopl',  handleSpeak);
+  on('done',   finishSpeaking);
+  on('answer', showDictBox);
+  on('skip',   doSkip);
+  on('rq',     doRQ);
+  on('next',   doNext);
+  on('stop',   doStop);
+}
+
+/* ── iOS DICTATION BOX ──────────────────────────────────────*/
+function showDictBox(){
+  document.getElementById('dictBox').classList.add('show');
+  document.getElementById('dictInput').value='';
+  setTimeout(()=>document.getElementById('dictInput').focus(),100);
+}
+document.getElementById('dictSubmit').addEventListener('click',async()=>{
+  const spoken=document.getElementById('dictInput').value.trim();
+  if(!spoken){showS('Kirjoita tai diktoi ensin vastauksesi.','e');return;}
+  document.getElementById('dictBox').classList.remove('show');
+  await processAnswer(spoken);
+});
+document.getElementById('dictInput').addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();document.getElementById('dictSubmit').click();}
+});
+
+/* ── DESKTOP SPEECH RECOGNITION ─────────────────────────────
+   continuous=true  → mic stays open until user presses "Vastaus valmis"
+   interimResults=true → show live transcription while speaking
+   collectedText accumulates all recognized speech segments
+──────────────────────────────────────────────────────────── */
+let collectedText=''; // Accumulates all speech while mic is open
+
+function handleSpeak(){if(listening)stopListen();else startListen();}
+
+function startListen(){
+  if(!SR){showS('Puheentunnistus ei toimi. Käytä Chrome- tai Edge-selainta.','e');return;}
+  listening=true;
+  collectedText='';
+  // Show "Answer ready" button so user can stop when done speaking
+  setBtns(['done','stop']);
+  showS('🎙 Kuuntelen... Puhu vastauksesi ja paina <strong>Vastaus valmis</strong> kun olet valmis.','l');
+  rec=new SR();
+  rec.lang='en-US';
+  rec.interimResults=true;   // Show live text while speaking
+  rec.maxAlternatives=1;
+  rec.continuous=true;       // Keep mic open — don't stop on silence
+
+  rec.onresult=e=>{
+    let interim='';
+    // Loop through all results: finalized ones go to collectedText, rest to interim
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      const t=e.results[i][0].transcript;
+      if(e.results[i].isFinal){
+        collectedText+=t+' '; // Add finalized speech to the collection
+      } else {
+        interim=t; // Show live preview of what is being spoken
+      }
+    }
+    // Show live transcription: collected (final) + current (interim)
+    const preview=(collectedText+interim).trim();
+    if(preview) showS(`🎙 Kuulen: "<em>${preview}</em>"... — paina <strong>Vastaus valmis</strong> kun olet valmis.`,'l');
+  };
+
+  rec.onerror=e=>{
+    listening=false;
+    const msgs={
+      'not-allowed':'❌ Mikrofonilupa puuttuu. Salli mikrofoni selaimen asetuksissa.',
+      'no-speech':'Ääntä ei kuultu. Puhu selkeämmin ja yritä uudelleen.',
+      'network':'Verkkovirhe.'
+    };
+    showS(msgs[e.error]||`Virhe: ${e.error}`,'e');
+    setBtns(['speak','skip','rq','stop']);
+  };
+  rec.onend=()=>{
+    // If still in listening mode, restart to keep mic open (browser may auto-stop)
+    if(listening){
+      try{rec.start();}catch(e){}
+    }
+  };
+  try{rec.start();}
+  catch(e){showS('Puheentunnistus ei käynnistynyt.','e');listening=false;setBtns(['speak','skip','rq','stop']);}
+}
+
+/* Stop mic and process whatever was collected */
+function stopListen(){
+  listening=false;
+  if(rec)try{rec.stop();}catch(e){}
+}
+
+/* Called when user presses "Vastaus valmis" button */
+async function finishSpeaking(){
+  if(!listening&&!collectedText) return;
+  stopListen();
+  await sleep(300); // Brief pause to catch last words
+  const spoken=collectedText.trim();
+  if(!spoken){
+    showS('Ääntä ei kuultu. Paina 🎤 Puhu nyt ja yritä uudelleen.','e');
+    setBtns(['speak','skip','rq','stop']);
+    return;
+  }
+  await processAnswer(spoken);
+}
+
+/* ── PROCESS ANSWER ─────────────────────────────────────────
+   Routes to either AI feedback (daily section) or word-diff
+   feedback (all other sections).
+   For AI section:
+     1. Show what was heard
+     2. Get and display Claude's feedback
+     3. Read the model answer aloud
+     4. Optionally auto-advance
+   For other sections:
+     1. Show word-diff result
+     2. Read the correct answer aloud
+     3. Optionally auto-advance if score >= 85%
+──────────────────────────────────────────────────────────── */
+async function processAnswer(spoken){
+  const item=items[idx];
+  const isDaily=item.s==='daily';
+
+  showS(`Kuulin: "${spoken}"`,'r');
+  setBtns(['next','rq','stop']);
+
+  if(isDaily){
+    // AI mode: get Claude's feedback
+    await sleep(300);
+    hideS();
+    await showAiFeedback(item.q, spoken, item.a);
+    // Read the question again, then the model answer aloud
+    await sleep(400);
+    showS('🔊 Kysymys uudelleen:','l');
+    await speak(item.q);
+    await sleep(400);
+    showS('🔊 Näyte vastaus:','l');
+    await speak(item.a);
+    hideS();
+    // Always wait for the user to press Next in AI mode
+    // so they have time to read Claude's feedback
+    setBtns(['next','rq','stop']);
+  } else {
+    // Word-diff mode
+    const score=renderFB(spoken,item);
+    await sleep(500);
+    showS('🔊 Oikea vastaus:','l');
+    await speak(item.a);
+    hideS();
+    if(document.getElementById('autoNext').checked&&score>=85){
+      await sleep(900);doNext();
+    }
+  }
+}
+
+/* ── MAIN QUESTION FLOW ──────────────────────────────────────*/
+async function askQ(){
+  if(idx>=items.length){
+    document.getElementById('qtext').textContent='🎉 Kaikki lauseet käyty! Hienoa työtä!';
+    document.getElementById('stag').textContent='';
+    document.getElementById('qnum').textContent='Valmis';
+    document.getElementById('dictBox').classList.remove('show');
+    document.getElementById('aiBox').classList.remove('show');
+    setBtns(['restart']);updProg();return;
+  }
+  const item=items[idx];
+  showQ(item);
+  if(isIOS){
+    setBtns(['answer','skip','rq','stop']);
+  } else {
+    setBtns(['skip','rq','stop']);
+  }
+  await speak(item.q);
+  await sleep(300);
+  if(isIOS){
+    setBtns(['answer','skip','rq','stop']);
+  } else {
+    setBtns(['speak','skip','rq','stop']);
+  }
+}
+
+/* ── BUTTON ACTIONS ─────────────────────────────────────────*/
+function doSkip(){
+  stopListen();speechSynthesis.cancel();
+  document.getElementById('dictBox').classList.remove('show');
+  const item=items[idx];
+  if(item.s==='daily'){
+    // For AI section, just show the model answer on skip
+    document.getElementById('aiBox').classList.remove('show');
+    document.getElementById('fb').classList.remove('show');
+    showS(`✦ Näyte vastaus: "${item.a}"`,'r');
+    speak(item.a).then(()=>{hideS();setBtns(['next','rq','stop']);});
+  } else {
+    renderFB('(ohitettu)',item);
+    speak(item.a).then(()=>setBtns(['next','rq','stop']));
+  }
+}
+function doRQ(){stopListen();speak(items[idx].q);}
+function doNext(){stopListen();collectedText='';idx++;askQ();}
+function doStop(){
+  stopListen();collectedText='';speechSynthesis.cancel();
+  document.getElementById('fb').classList.remove('show');
+  document.getElementById('aiBox').classList.remove('show');
+  document.getElementById('dictBox').classList.remove('show');
+  hideS();
+  document.getElementById('qtext').textContent='Paina "Aloita harjoittelu" aloittaaksesi.';
+  document.getElementById('stag').textContent='';document.getElementById('qnum').textContent='';
+  document.getElementById('progb').style.width='0%';
+  setBtns(['start']);
+}
+
+setBtns(['start']);
+})();
+</script>
+</body>
+</html>
