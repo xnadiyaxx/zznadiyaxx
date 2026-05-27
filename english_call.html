@@ -448,7 +448,13 @@ window.startCall=async function(){
 
   setCallStatus(true,'Yhdistetään...');
   document.getElementById('transcript').innerHTML='';
-  if(isIOS){document.getElementById('iosInputBox').classList.add('show');document.getElementById('btnMic').style.display='none';}
+  if(isIOS){
+    document.getElementById('iosInputBox').classList.remove('show');
+    document.getElementById('btnMic').style.display='none';
+    // Warm up TTS on iOS inside the user gesture (button tap)
+    const warmup=new SpeechSynthesisUtterance(' ');
+    warmup.volume=0.01; speechSynthesis.speak(warmup);
+  }
 
   await sleep(700);
   setCallStatus(true,'Puhelu käynnissä');
@@ -519,8 +525,29 @@ function stopListening(){
   document.getElementById('micStatus').textContent='Vastaus tallennettu — paina Vastaus valmis';
   document.getElementById('micStatus').className='mic-status';
 }
-function enableInput(){document.getElementById('btnMic').disabled=false;document.getElementById('btnDone').disabled=false;if(isIOS)document.getElementById('iosInput').disabled=false;}
-function disableInput(){document.getElementById('btnMic').disabled=true;document.getElementById('btnDone').disabled=true;if(isIOS)document.getElementById('iosInput').disabled=true;document.getElementById('livePreview').classList.remove('show');document.getElementById('livePreview').textContent='';document.getElementById('micStatus').textContent='';}
+function enableInput(){
+  document.getElementById('btnMic').disabled=false;
+  document.getElementById('btnDone').disabled=false;
+  if(isIOS){
+    const box=document.getElementById('iosInputBox');
+    box.classList.add('show');
+    const ta=document.getElementById('iosInput');
+    ta.disabled=false;
+    ta.value='';
+    setTimeout(()=>ta.focus(),150);
+  }
+}
+function disableInput(){
+  document.getElementById('btnMic').disabled=true;
+  document.getElementById('btnDone').disabled=true;
+  if(isIOS){
+    document.getElementById('iosInput').disabled=true;
+    document.getElementById('iosInputBox').classList.remove('show');
+  }
+  document.getElementById('livePreview').classList.remove('show');
+  document.getElementById('livePreview').textContent='';
+  document.getElementById('micStatus').textContent='';
+}
 
 /* END CALL */
 window.endCall=async function(){
