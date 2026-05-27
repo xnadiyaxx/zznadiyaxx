@@ -1,0 +1,595 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>English Call Practice</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+    :root{
+      --bg:#0d0f12;--card:#161920;--card2:#1e2128;--border:#2a2d35;
+      --ink:#eef0f3;--muted:#7a8094;--accent:#4ade80;--accent2:#22c55e;
+      --red:#f87171;--red2:#ef4444;--yellow:#fbbf24;--blue:#60a5fa;--purple:#a78bfa;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{min-height:100%;background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif}
+    body{padding:20px;overflow-x:hidden}
+    .phone{width:min(420px,100%);margin:0 auto;background:var(--card);border:1px solid var(--border);border-radius:32px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.6);min-height:calc(100vh - 40px);display:flex;flex-direction:column}
+    .statusbar{background:var(--card2);padding:12px 20px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+    .statusbar .time{font-size:13px;font-weight:500;font-family:'DM Mono',monospace;color:var(--muted)}
+    .call-status{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:500}
+    .call-dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+    .call-dot.active{background:var(--accent);animation:pulse-dot 1.5s infinite}
+    @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.2)}}
+    .call-timer{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted)}
+    .screen{display:none;flex:1;flex-direction:column}
+    .screen.active{display:flex}
+
+    /* SETUP */
+    #screen-setup{padding:24px 20px;gap:18px;overflow-y:auto}
+    .app-title{text-align:center}
+    .app-title h1{font-size:1.4rem;font-weight:600;margin-bottom:4px}
+    .app-title p{font-size:.83rem;color:var(--muted);line-height:1.5}
+    .apibox{background:var(--card2);border:1px solid var(--border);border-radius:16px;padding:14px}
+    .apibox label{font-size:.78rem;color:var(--muted);margin-bottom:6px;display:block}
+    .apibox input{width:100%;background:#0d0f12;border:1px solid var(--border);color:var(--ink);border-radius:10px;padding:10px 12px;font-size:.83rem;font-family:'DM Mono',monospace}
+    .apibox input:focus{outline:none;border-color:var(--accent)}
+    .apibox button{margin-top:8px;width:100%;background:var(--card);border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:9px;font-size:.83rem;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s}
+    .apibox button:hover{border-color:var(--accent);color:var(--accent)}
+    .api-msg{font-size:.76rem;margin-top:6px;min-height:16px}
+    .api-ok{color:var(--accent)}.api-err{color:var(--red)}
+    .section-title{font-size:.75rem;font-weight:500;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+
+    /* Call type selector */
+    .calltypes{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:2px}
+    .ct-btn{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:12px 6px;cursor:pointer;text-align:center;transition:all .2s;-webkit-tap-highlight-color:transparent}
+    .ct-btn:hover{border-color:var(--muted)}
+    .ct-btn.selected{border-color:var(--blue);background:rgba(96,165,250,.08)}
+    .ct-btn .ct-icon{font-size:1.4rem;margin-bottom:5px;display:block}
+    .ct-btn .ct-name{font-size:.82rem;font-weight:500;display:block;color:var(--blue)}
+    .ct-btn .ct-desc{font-size:.7rem;color:var(--muted);margin-top:2px;display:block;line-height:1.3}
+
+    /* Levels */
+    .levels{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+    .level-btn{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:12px 6px;cursor:pointer;text-align:center;transition:all .2s;-webkit-tap-highlight-color:transparent}
+    .level-btn.selected{border-color:var(--accent);background:rgba(74,222,128,.08)}
+    .level-btn .lv-icon{font-size:1.4rem;margin-bottom:5px;display:block}
+    .level-btn .lv-name{font-size:.82rem;font-weight:500;display:block}
+    .level-btn .lv-desc{font-size:.7rem;color:var(--muted);margin-top:2px;line-height:1.3;display:block}
+    .level-btn[data-level=easy] .lv-name{color:#4ade80}
+    .level-btn[data-level=medium] .lv-name{color:var(--yellow)}
+    .level-btn[data-level=hard] .lv-name{color:var(--red)}
+    .call-btn-wrap{display:flex;flex-direction:column;align-items:center;padding:8px 0}
+    .call-btn{width:76px;height:76px;border-radius:50%;background:var(--accent2);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.9rem;transition:transform .1s;-webkit-tap-highlight-color:transparent}
+    .call-btn:hover{transform:scale(1.06)}
+    .call-btn:active{transform:scale(.95)}
+    .call-btn-label{font-size:.78rem;color:var(--muted);text-align:center;margin-top:8px}
+
+    /* CALL SCREEN */
+    #screen-call{padding:0}
+    .caller-info{background:linear-gradient(180deg,var(--card2) 0%,var(--card) 100%);padding:20px 20px 16px;text-align:center;border-bottom:1px solid var(--border)}
+    .caller-avatar{width:58px;height:58px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:600}
+    .avatar-mm{background:linear-gradient(135deg,#60a5fa,#3b82f6);color:#082040}
+    .avatar-wm{background:linear-gradient(135deg,#f472b6,#ec4899);color:#3d0020}
+    .avatar-gen{background:linear-gradient(135deg,#4ade80,#22c55e);color:#052e16}
+    .caller-name{font-size:1.05rem;font-weight:600;margin-bottom:2px}
+    .caller-sub{font-size:.78rem;color:var(--muted)}
+    .level-badge{display:inline-block;margin-top:6px;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:500}
+    .badge-easy{background:rgba(74,222,128,.15);color:#4ade80;border:1px solid rgba(74,222,128,.3)}
+    .badge-medium{background:rgba(251,191,36,.15);color:var(--yellow);border:1px solid rgba(251,191,36,.3)}
+    .badge-hard{background:rgba(248,113,113,.15);color:var(--red);border:1px solid rgba(248,113,113,.3)}
+    .transcript{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
+    .msg{max-width:82%;animation:pop-in .2s ease}
+    @keyframes pop-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    .msg.claude{align-self:flex-start}.msg.user{align-self:flex-end}
+    .msg-bubble{padding:10px 14px;border-radius:18px;font-size:.88rem;line-height:1.55}
+    .msg.claude .msg-bubble{background:var(--card2);border:1px solid var(--border);border-bottom-left-radius:4px}
+    .msg.user .msg-bubble{background:rgba(74,222,128,.15);border:1px solid rgba(74,222,128,.25);border-bottom-right-radius:4px}
+    .msg-name{font-size:.68rem;color:var(--muted);margin-bottom:3px;padding:0 4px}
+    .msg.user .msg-name{text-align:right}
+    .typing{align-self:flex-start}
+    .typing-dots{display:flex;gap:4px;align-items:center}
+    .typing-dots span{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:bounce .9s infinite}
+    .typing-dots span:nth-child(2){animation-delay:.2s}
+    .typing-dots span:nth-child(3){animation-delay:.4s}
+    @keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
+    .input-area{background:var(--card2);border-top:1px solid var(--border);padding:12px 14px}
+    .ios-input{display:none}.ios-input.show{display:block}
+    .ios-hint{font-size:.76rem;color:var(--muted);margin-bottom:7px;text-align:center}
+    #iosInput{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--ink);border-radius:12px;padding:11px;font-size:.92rem;font-family:'DM Sans',sans-serif;resize:none;min-height:65px;line-height:1.5}
+    #iosInput:focus{outline:none;border-color:var(--accent)}
+    #iosInput::placeholder{color:#3a3d47}
+    .mic-status{font-size:.78rem;color:var(--muted);text-align:center;margin-bottom:7px;min-height:17px}
+    .mic-status.listening{color:var(--accent)}
+    .live-preview{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:9px 12px;font-size:.85rem;color:var(--muted);min-height:42px;margin-bottom:9px;line-height:1.5;font-style:italic;display:none}
+    .live-preview.show{display:block}
+    .btn-row{display:flex;gap:8px}
+    .btn-row button{flex:1;border-radius:12px;padding:12px;border:none;font-size:.86rem;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent}
+    .btn-row button:active{transform:scale(.97)}
+    .btn-mic{background:var(--accent2);color:#052e16}
+    .btn-mic.recording{background:var(--red2);color:#fff}
+    .btn-done{background:var(--card);border:1px solid var(--border)!important;color:var(--ink)}
+    .btn-end{width:100%;margin-top:9px;border-radius:12px;padding:11px;background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.3);color:var(--red);font-size:.86rem;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer}
+
+    /* END SCREEN */
+    #screen-end{padding:20px;gap:14px;align-items:center;overflow-y:auto}
+    #screen-end h2{font-size:1.15rem;font-weight:600;text-align:center}
+    #screen-end>p{font-size:.83rem;color:var(--muted);text-align:center}
+    .stats-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
+    .stat-card{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:12px;text-align:center}
+    .stat-card .sv{font-size:1.4rem;font-weight:600;color:var(--accent)}
+    .stat-card .sl{font-size:.73rem;color:var(--muted);margin-top:2px}
+    .transcript-preview{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:12px;max-height:160px;overflow-y:auto;font-size:.78rem;line-height:1.7;color:var(--muted)}
+    .transcript-preview .tc{color:var(--accent)}.transcript-preview .tu{color:var(--ink)}
+
+    /* AI ANALYSIS BOX */
+    .ai-analysis{width:100%;background:#130d2e;border:1px solid #4c1d95;border-radius:14px;padding:14px}
+    .ai-analysis-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:.82rem;color:var(--purple);font-weight:600}
+    .ai-analysis-body{font-size:.83rem;line-height:1.75;color:#e2d9f3;white-space:pre-wrap}
+    .ai-loading{display:flex;gap:5px;align-items:center;color:var(--purple);font-size:.83rem}
+    .ai-loading span{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--purple);animation:bounce .9s infinite}
+    .ai-loading span:nth-child(2){animation-delay:.2s}
+    .ai-loading span:nth-child(3){animation-delay:.4s}
+    .ai-speak-btn{margin-top:10px;background:#2d1b69;border:1px solid #4c1d95;color:#c4b5fd;border-radius:10px;padding:8px 14px;font-size:.82rem;cursor:pointer;display:none;font-family:'DM Sans',sans-serif}
+    .ai-speak-btn.show{display:inline-block}
+
+    .end-btns{display:flex;flex-direction:column;gap:8px;width:100%}
+    .end-btns button{width:100%;padding:12px;border-radius:12px;font-size:.88rem;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .15s;border:1px solid var(--border)}
+    .end-btns button:active{transform:scale(.98)}
+    .btn-download{background:var(--accent2);border-color:var(--accent2)!important;color:#052e16}
+    .btn-newcall{background:var(--card2);color:var(--ink)}
+    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1c0a0a;border:1px solid var(--red2);color:var(--red);border-radius:12px;padding:10px 16px;font-size:.83rem;max-width:340px;text-align:center;z-index:100;opacity:0;transition:opacity .3s;pointer-events:none}
+    .toast.show{opacity:1}
+  </style>
+</head>
+<body>
+<div class="phone">
+
+  <div class="statusbar">
+    <span class="time" id="clockEl">--:--</span>
+    <div class="call-status">
+      <div class="call-dot" id="callDot"></div>
+      <span id="callStatusText">Valmis</span>
+    </div>
+    <span class="call-timer" id="callTimer"></span>
+  </div>
+
+  <!-- ══ SCREEN 1: SETUP ══ -->
+  <div class="screen active" id="screen-setup">
+    <div class="app-title">
+      <h1>📞 English Call</h1>
+      <p>Harjoittele englantia kuin oikeassa puhelussa.<br>Claude soittaa sinulle — vastaa vapaasti!</p>
+    </div>
+
+    <div class="apibox">
+      <label>Anthropic API-avain</label>
+      <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-..." autocomplete="off" />
+      <button id="saveApiKey">💾 Tallenna avain</button>
+      <div class="api-msg" id="apiMsg"></div>
+    </div>
+
+    <!-- Call type -->
+    <div>
+      <div class="section-title">Puhelutyyppi</div>
+      <div class="calltypes">
+        <div class="ct-btn selected" data-ctype="mm" onclick="selectCallType('mm',this)">
+          <span class="ct-icon">👨‍💼</span>
+          <span class="ct-name">Mies–mies</span>
+          <span class="ct-desc">Kaveripuhelu, rento</span>
+        </div>
+        <div class="ct-btn" data-ctype="wm" onclick="selectCallType('wm',this)">
+          <span class="ct-icon">👩‍💼</span>
+          <span class="ct-name">Nainen–mies</span>
+          <span class="ct-desc">Tuttu, ystävällinen</span>
+        </div>
+        <div class="ct-btn" data-ctype="gen" onclick="selectCallType('gen',this)">
+          <span class="ct-icon">🌍</span>
+          <span class="ct-name">Yleinen</span>
+          <span class="ct-desc">Neutraali tyyli</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Level -->
+    <div>
+      <div class="section-title">Taso</div>
+      <div class="levels">
+        <div class="level-btn selected" data-level="easy" onclick="selectLevel('easy',this)">
+          <span class="lv-icon">🟢</span>
+          <span class="lv-name">Helppo</span>
+          <span class="lv-desc">Hidas, yksinkertainen</span>
+        </div>
+        <div class="level-btn" data-level="medium" onclick="selectLevel('medium',this)">
+          <span class="lv-icon">🟡</span>
+          <span class="lv-name">Keski</span>
+          <span class="lv-desc">Normaali tempo</span>
+        </div>
+        <div class="level-btn" data-level="hard" onclick="selectLevel('hard',this)">
+          <span class="lv-icon">🔴</span>
+          <span class="lv-name">Haastava</span>
+          <span class="lv-desc">Nopea, slangi</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="call-btn-wrap">
+      <button class="call-btn" onclick="startCall()">📞</button>
+      <div class="call-btn-label">Aloita puhelu</div>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN 2: CALL ══ -->
+  <div class="screen" id="screen-call">
+    <div class="caller-info">
+      <div class="caller-avatar" id="callerAvatar"></div>
+      <div class="caller-name" id="callerName"></div>
+      <div class="caller-sub" id="callerSub"></div>
+      <span class="level-badge" id="levelBadge"></span>
+    </div>
+    <div class="transcript" id="transcript"></div>
+    <div class="input-area">
+      <div class="ios-input" id="iosInputBox">
+        <div class="ios-hint">Paina 🎤 näppäimistöltä ja puhu, sitten paina Vastaus valmis</div>
+        <textarea id="iosInput" placeholder="Kirjoita tai diktoi vastauksesi..." rows="2"></textarea>
+      </div>
+      <div class="mic-status" id="micStatus"></div>
+      <div class="live-preview" id="livePreview"></div>
+      <div class="btn-row">
+        <button class="btn-mic" id="btnMic" onclick="handleMic()">🎤 Puhu</button>
+        <button class="btn-done" id="btnDone" onclick="submitAnswer()">✅ Vastaus valmis</button>
+      </div>
+      <button class="btn-end" onclick="endCall()">📵 Lopeta puhelu</button>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN 3: END ══ -->
+  <div class="screen" id="screen-end">
+    <h2>📵 Puhelu päättyi</h2>
+    <p>Hienoa työtä! Tässä yhteenveto puhelustasi.</p>
+
+    <div class="stats-row">
+      <div class="stat-card"><div class="sv" id="statTurns">0</div><div class="sl">Vuoroa</div></div>
+      <div class="stat-card"><div class="sv" id="statDuration">0:00</div><div class="sl">Kesto</div></div>
+    </div>
+
+    <!-- AI Analysis -->
+    <div class="ai-analysis" id="aiAnalysisBox">
+      <div class="ai-analysis-header">🤖 Claude analysoi puhelusi</div>
+      <div class="ai-loading" id="aiAnalysisLoading">
+        <span></span><span></span><span></span>
+        <span style="margin-left:6px;width:auto;height:auto;background:none;animation:none;border-radius:0">Analysoidaan...</span>
+      </div>
+      <div class="ai-analysis-body" id="aiAnalysisText"></div>
+      <button class="ai-speak-btn" id="aiSpeakBtn" onclick="speakAnalysis()">🔊 Kuuntele analyysi</button>
+    </div>
+
+    <div style="width:100%">
+      <div class="section-title">Puhelu tekstinä</div>
+      <div class="transcript-preview" id="transcriptPreview"></div>
+    </div>
+
+    <div class="end-btns">
+      <button class="btn-download" onclick="downloadTranscript()">⬇ Lataa puhelu tekstinä</button>
+      <button class="btn-newcall" onclick="newCall()">📞 Uusi puhelu</button>
+    </div>
+  </div>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+'use strict';
+
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+const isIOS = /iP(hone|ad|od)/i.test(navigator.userAgent);
+let apiKey='', level='easy', callType='mm';
+let callHistory=[], callStartTime=null, callTimerInterval=null;
+let listening=false, rec=null, collectedText='', voices=[], userTurns=0;
+let analysisText='';
+
+/* CLOCK */
+function updateClock(){
+  const n=new Date();
+  document.getElementById('clockEl').textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+}
+updateClock(); setInterval(updateClock,10000);
+
+/* API KEY */
+(function loadApiKey(){
+  const s=localStorage.getItem('anthropic_api_key')||'';
+  if(s){apiKey=s;document.getElementById('apiKeyInput').value=s;showApiMsg('✅ Avain tallennettu',true);}
+})();
+document.getElementById('saveApiKey').addEventListener('click',()=>{
+  const v=document.getElementById('apiKeyInput').value.trim();
+  if(!v.startsWith('sk-ant-')){showApiMsg('❌ Virheellinen avain',false);return;}
+  apiKey=v;localStorage.setItem('anthropic_api_key',v);showApiMsg('✅ Tallennettu!',true);
+});
+function showApiMsg(m,ok){const e=document.getElementById('apiMsg');e.textContent=m;e.className='api-msg '+(ok?'api-ok':'api-err');}
+
+/* SELECTORS */
+window.selectCallType=function(t,el){
+  callType=t;
+  document.querySelectorAll('.ct-btn').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+};
+window.selectLevel=function(l,el){
+  level=l;
+  document.querySelectorAll('.level-btn').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+};
+
+/* VOICES */
+function loadVoices(){const v=speechSynthesis.getVoices();if(!v.length)return false;voices=v;return true;}
+speechSynthesis.onvoiceschanged=loadVoices; loadVoices();
+
+function speak(text){
+  return new Promise(res=>{
+    speechSynthesis.cancel();
+    setTimeout(()=>{
+      loadVoices();
+      const u=new SpeechSynthesisUtterance(text);
+      u.rate=level==='easy'?0.82:level==='medium'?0.92:1.05;
+      u.pitch=1.0;u.volume=1.0;
+      const pool=voices.filter(v=>/en(-US)?/i.test(v.lang));
+      const chosen=pool.find(v=>/en-US/i.test(v.lang))||pool[0]||voices[0];
+      if(chosen)u.voice=chosen;
+      u.onend=res;u.onerror=()=>res();
+      speechSynthesis.speak(u);
+    },80);
+  });
+}
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+/* CALLER CONFIG per type */
+const CALLERS={
+  mm:{name:'Alex',sub:'Your American buddy',avatarClass:'avatar-mm',initial:'A',
+      persona:'You are Alex, a friendly American guy in his 30s calling his male Finnish friend. Be casual, laid-back, use bro-friendly expressions. Topics: sports, weekend plans, work, food, cars, trips.'},
+  wm:{name:'Sarah',sub:'Your American friend',avatarClass:'avatar-wm',initial:'S',
+      persona:'You are Sarah, a warm friendly American woman in her 30s calling her male Finnish friend. Be upbeat, friendly, chatty. Topics: weekend plans, food, places, movies, mutual friends, travel.'},
+  gen:{name:'Jordan',sub:'Your American contact',avatarClass:'avatar-gen',initial:'J',
+      persona:'You are Jordan, a friendly American calling a Finnish friend. Use neutral, clear American English. Topics can be anything everyday — work, hobbies, plans, food, weather.'},
+};
+
+/* SYSTEM PROMPT */
+function getSystemPrompt(){
+  const c=CALLERS[callType];
+  const base=`${c.persona}
+
+IMPORTANT RULES:
+- Stay in character as ${c.name}. You are NOT an AI assistant — never say so.
+- Keep each reply SHORT: 1-3 sentences only.
+- Ask ONE question at a time to keep conversation flowing.
+- React naturally to what your friend says.
+- Use natural American English: contractions, informal expressions.
+- Never correct grammar directly — just model good English.
+- If unclear: "Sorry, what do you mean?" or "Oh yeah? Tell me more!"`;
+
+  if(level==='easy') return base+'\n- Simple words, short sentences, slow calm tone. Topics: daily routine, food, weather, hobbies.';
+  if(level==='medium') return base+'\n- Normal American pace. Use expressions: "That\'s awesome", "No way!", "For real?", "Totally"';
+  return base+'\n- Fast natural pace, casual slang. Use: "Oh man", "Dude", "That\'s wild", "For sure", "You know what I mean?", "No kidding". Natural fillers OK.';
+}
+
+/* CLAUDE API - conversation */
+async function askClaude(userMessage){
+  if(!apiKey)return"Hey, sorry — connection problem. Can you hear me?";
+  const messages=[];
+  for(const t of callHistory){
+    messages.push({role:t.role==='claude'?'assistant':'user',content:t.text});
+  }
+  if(userMessage) messages.push({role:'user',content:userMessage});
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:120,system:getSystemPrompt(),messages})
+    });
+    if(!res.ok){const e=await res.json().catch(()=>({}));showToast('❌ '+(e.error?.message||'API virhe'));return"Sorry, lost you for a sec. Say that again?";}
+    const d=await res.json();
+    return d.content?.[0]?.text||"Hello? Still there?";
+  }catch(e){showToast('❌ Verkkovirhe');return"Bad connection. Can you hear me?";}
+}
+
+/* CLAUDE API - end-of-call analysis */
+async function getCallAnalysis(){
+  if(!apiKey||callHistory.length<2)return null;
+  const transcript=callHistory.map(t=>(t.role==='claude'?'Alex':'Me')+': '+t.text).join('\n');
+  const prompt=`You are an expert American English coach. Analyze this phone conversation transcript where a Finnish person practiced English with an AI friend named Alex.
+
+TRANSCRIPT:
+${transcript}
+
+Write a helpful, encouraging analysis in English. Structure it clearly with these sections:
+
+1. OVERALL IMPRESSION (2-3 sentences — what went well, general fluency feel)
+
+2. AMERICAN ENGLISH TIPS (3-5 specific examples from what the person actually said, showing the Finnish/formal version vs the more natural American version)
+Format each tip like:
+• You said: "..." → More American: "..." — (short explanation why)
+
+3. GREAT PHRASES YOU USED (2-3 expressions they used well — be specific and positive)
+
+4. KEEP PRACTICING (1-2 encouraging sentences + one specific thing to focus on next time)
+
+Keep the whole analysis under 300 words. Be warm, specific, and practical. Focus on making their English sound MORE naturally American.`;
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:600,messages:[{role:'user',content:prompt}]})
+    });
+    if(!res.ok)return null;
+    const d=await res.json();
+    return d.content?.[0]?.text||null;
+  }catch(e){return null;}
+}
+
+/* START CALL */
+window.startCall=async function(){
+  if(!apiKey){showToast('⚠️ Lisää API-avain ensin!');return;}
+  showScreen('screen-call');
+  callHistory=[];userTurns=0;callStartTime=Date.now();
+  callTimerInterval=setInterval(()=>{
+    const s=Math.floor((Date.now()-callStartTime)/1000);
+    document.getElementById('callTimer').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+  },1000);
+
+  // Set caller UI
+  const c=CALLERS[callType];
+  const av=document.getElementById('callerAvatar');
+  av.textContent=c.initial; av.className='caller-avatar '+c.avatarClass;
+  document.getElementById('callerName').textContent=c.name;
+  document.getElementById('callerSub').textContent=c.sub;
+  const badges={easy:'badge-easy',medium:'badge-medium',hard:'badge-hard'};
+  const labels={easy:'🟢 Helppo',medium:'🟡 Keskitaso',hard:'🔴 Haastava'};
+  const badge=document.getElementById('levelBadge');
+  badge.textContent=labels[level]; badge.className='level-badge '+badges[level];
+
+  setCallStatus(true,'Yhdistetään...');
+  document.getElementById('transcript').innerHTML='';
+  if(isIOS){document.getElementById('iosInputBox').classList.add('show');document.getElementById('btnMic').style.display='none';}
+
+  await sleep(700);
+  setCallStatus(true,'Puhelu käynnissä');
+  showTyping();
+  const opening=await askClaude(null);
+  hideTyping();
+  addMessage('claude',opening);
+  callHistory.push({role:'claude',text:opening});
+  await speak(opening);
+  enableInput();
+};
+
+/* SUBMIT */
+window.submitAnswer=async function(){
+  let spoken='';
+  if(isIOS){
+    spoken=document.getElementById('iosInput').value.trim();
+    if(!spoken){showToast('Kirjoita tai diktoi ensin!');return;}
+    document.getElementById('iosInput').value='';
+  }else{
+    if(listening)stopListening();
+    await sleep(200);
+    spoken=collectedText.trim();
+    if(!spoken){showToast('Puhu ensin!');return;}
+  }
+  userTurns++;
+  addMessage('user',spoken);
+  callHistory.push({role:'user',text:spoken});
+  collectedText='';disableInput();
+  showTyping();
+  const response=await askClaude(spoken);
+  hideTyping();
+  addMessage('claude',response);
+  callHistory.push({role:'claude',text:response});
+  await speak(response);
+  enableInput();
+};
+
+/* MIC */
+window.handleMic=function(){if(listening)stopListening();else startListening();};
+function startListening(){
+  if(!SR){showToast('Puheentunnistus ei toimi. Käytä Chromea.');return;}
+  listening=true; collectedText='';
+  document.getElementById('btnMic').textContent='🔴 Kuuntelee...';
+  document.getElementById('btnMic').classList.add('recording');
+  document.getElementById('btnDone').classList.add('show');
+  document.getElementById('livePreview').classList.add('show');
+  document.getElementById('micStatus').textContent='🎙 Mikrofoni auki — puhu vapaasti';
+  document.getElementById('micStatus').className='mic-status listening';
+  rec=new SR(); rec.lang='en-US'; rec.interimResults=true; rec.maxAlternatives=1; rec.continuous=true;
+  rec.onresult=e=>{
+    let interim='';
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      const t=e.results[i][0].transcript;
+      if(e.results[i].isFinal)collectedText+=t+' '; else interim=t;
+    }
+    const p=(collectedText+interim).trim();
+    document.getElementById('livePreview').textContent=p?'"'+p+'"':'';
+  };
+  rec.onerror=e=>{listening=false;document.getElementById('btnMic').textContent='🎤 Puhu';document.getElementById('btnMic').classList.remove('recording');document.getElementById('micStatus').textContent='';document.getElementById('micStatus').className='mic-status';if(e.error!=='no-speech')showToast('Mikrofonivirhe: '+e.error);};
+  rec.onend=()=>{if(listening)try{rec.start();}catch(e){}};
+  try{rec.start();}catch(e){listening=false;showToast('Mikrofoni ei käynnistynyt.');}
+}
+function stopListening(){
+  listening=false; if(rec)try{rec.stop();}catch(e){}
+  document.getElementById('btnMic').textContent='🎤 Puhu';
+  document.getElementById('btnMic').classList.remove('recording');
+  document.getElementById('micStatus').textContent='Vastaus tallennettu — paina Vastaus valmis';
+  document.getElementById('micStatus').className='mic-status';
+}
+function enableInput(){document.getElementById('btnMic').disabled=false;document.getElementById('btnDone').disabled=false;if(isIOS)document.getElementById('iosInput').disabled=false;}
+function disableInput(){document.getElementById('btnMic').disabled=true;document.getElementById('btnDone').disabled=true;if(isIOS)document.getElementById('iosInput').disabled=true;document.getElementById('livePreview').classList.remove('show');document.getElementById('livePreview').textContent='';document.getElementById('micStatus').textContent='';}
+
+/* END CALL */
+window.endCall=async function(){
+  speechSynthesis.cancel();
+  if(listening)stopListening();
+  clearInterval(callTimerInterval);
+  setCallStatus(false,'Puhelu päättyi');
+  const dur=Math.floor((Date.now()-callStartTime)/1000);
+  document.getElementById('statTurns').textContent=userTurns;
+  document.getElementById('statDuration').textContent=Math.floor(dur/60)+':'+String(dur%60).padStart(2,'0');
+
+  // Transcript preview
+  document.getElementById('transcriptPreview').innerHTML=callHistory.map(t=>
+    `<div class="${t.role==='claude'?'tc':'tu'}"><strong>${t.role==='claude'?CALLERS[callType].name:'Sinä'}:</strong> ${t.text}</div>`
+  ).join('');
+
+  showScreen('screen-end');
+
+  // Get AI analysis
+  document.getElementById('aiAnalysisLoading').style.display='flex';
+  document.getElementById('aiAnalysisText').textContent='';
+  document.getElementById('aiSpeakBtn').classList.remove('show');
+  const analysis=await getCallAnalysis();
+  document.getElementById('aiAnalysisLoading').style.display='none';
+  if(analysis){
+    analysisText=analysis;
+    document.getElementById('aiAnalysisText').textContent=analysis;
+    document.getElementById('aiSpeakBtn').classList.add('show');
+  }else{
+    document.getElementById('aiAnalysisText').textContent='(Analyysi ei onnistunut — tarkista API-avain)';
+  }
+};
+
+window.speakAnalysis=function(){if(analysisText)speak(analysisText);};
+
+/* DOWNLOAD */
+window.downloadTranscript=function(){
+  const dur=document.getElementById('statDuration').textContent;
+  const lvl={easy:'Helppo',medium:'Keskitaso',hard:'Haastava'}[level];
+  const types={mm:'Mies–mies',wm:'Nainen–mies',gen:'Yleinen'}[callType];
+  let txt=`English Call Practice\n`;
+  txt+=`Päivämäärä: ${new Date().toLocaleDateString('fi-FI')}\n`;
+  txt+=`Tyyppi: ${types} | Taso: ${lvl} | Kesto: ${dur} | Vuoroja: ${userTurns}\n`;
+  txt+='─'.repeat(40)+'\n\n';
+  txt+=callHistory.map(t=>(t.role==='claude'?CALLERS[callType].name+':  ':'Minä:  ')+t.text).join('\n\n');
+  if(analysisText) txt+='\n\n'+'─'.repeat(40)+'\nCLAUDE ANALYYSI:\n\n'+analysisText;
+  const blob=new Blob([txt],{type:'text/plain;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`english-call-${new Date().toISOString().slice(0,10)}.txt`;
+  a.click();URL.revokeObjectURL(url);
+};
+
+window.newCall=function(){setCallStatus(false,'Valmis');document.getElementById('callTimer').textContent='';showScreen('screen-setup');};
+
+/* HELPERS */
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function setCallStatus(a,t){document.getElementById('callDot').className='call-dot'+(a?' active':'');document.getElementById('callStatusText').textContent=t;}
+function addMessage(role,text){
+  const t=document.getElementById('transcript');
+  const d=document.createElement('div');d.className='msg '+role;
+  d.innerHTML=`<div class="msg-name">${role==='claude'?CALLERS[callType].name:'Sinä'}</div><div class="msg-bubble">${text}</div>`;
+  t.appendChild(d);t.scrollTop=t.scrollHeight;
+}
+function showTyping(){const t=document.getElementById('transcript');const d=document.createElement('div');d.className='msg claude typing';d.id='typingIndicator';d.innerHTML=`<div class="msg-name">${CALLERS[callType].name}</div><div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>`;t.appendChild(d);t.scrollTop=t.scrollHeight;}
+function hideTyping(){const e=document.getElementById('typingIndicator');if(e)e.remove();}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+document.getElementById('iosInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();submitAnswer();}});
+})();
+</script>
+</body>
+</html>
