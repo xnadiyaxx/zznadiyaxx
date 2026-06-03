@@ -101,8 +101,11 @@
     #iosInput::placeholder{color:#3a3d47}
     .mic-status{font-size:.78rem;color:var(--muted);text-align:center;margin-bottom:7px;min-height:17px}
     .mic-status.listening{color:var(--accent)}
-    .live-preview{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:9px 12px;font-size:.85rem;color:var(--muted);min-height:42px;margin-bottom:9px;line-height:1.5;font-style:italic;display:none}
+    .live-preview{background:var(--bg);border:2px solid var(--accent);border-radius:12px;padding:10px 12px;font-size:.92rem;color:var(--ink);min-height:60px;margin-bottom:6px;line-height:1.5;font-family:inherit;resize:none;width:100%;box-sizing:border-box;display:none}
     .live-preview.show{display:block}
+    .live-preview:focus{outline:none}
+    .edit-hint{font-size:.72rem;color:var(--muted);text-align:center;margin-bottom:6px;display:none}
+    .edit-hint.show{display:block}
     .btn-row{display:flex;gap:8px}
     .btn-row button{flex:1;border-radius:12px;padding:12px;border:none;font-size:.86rem;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent}
     .btn-row button:active{transform:scale(.97)}
@@ -233,7 +236,8 @@
         <textarea id="iosInput" placeholder="Kirjoita tai diktoi vastauksesi..." rows="2"></textarea>
       </div>
       <div class="mic-status" id="micStatus"></div>
-      <div class="live-preview" id="livePreview"></div>
+      <div class="edit-hint" id="editHint">✏️ Voit korjata tekstin ennen kuin painat Vastaus valmis</div>
+      <textarea class="live-preview" id="livePreview" rows="2" placeholder="Puhu ensin..."></textarea>
       <div class="btn-row">
         <button class="btn-mic" id="btnMic" onclick="handleMic()">🎤 Puhu</button>
         <button class="btn-done" id="btnDone" onclick="submitAnswer()">✅ Vastaus valmis</button>
@@ -477,7 +481,8 @@ window.submitAnswer=async function(){
   }else{
     if(listening)stopListening();
     await sleep(200);
-    spoken=collectedText.trim();
+    const lp=document.getElementById('livePreview');
+    spoken=(lp.value.trim()||collectedText.trim());
     if(!spoken){showToast('Puhu ensin!');return;}
   }
   userTurns++;
@@ -498,10 +503,13 @@ window.handleMic=function(){if(listening)stopListening();else startListening();}
 function startListening(){
   if(!SR){showToast('Puheentunnistus ei toimi. Käytä Chromea.');return;}
   listening=true; collectedText='';
+  const lpEl=document.getElementById('livePreview');
+  lpEl.value=''; lpEl._userEdited=false;
   document.getElementById('btnMic').textContent='🔴 Kuuntelee...';
   document.getElementById('btnMic').classList.add('recording');
   document.getElementById('btnDone').classList.add('show');
   document.getElementById('livePreview').classList.add('show');
+  document.getElementById('editHint').classList.add('show');
   document.getElementById('micStatus').textContent='🎙 Mikrofoni auki — puhu vapaasti';
   document.getElementById('micStatus').className='mic-status listening';
   rec=new SR(); rec.lang='en-US'; rec.interimResults=true; rec.maxAlternatives=1; rec.continuous=true;
@@ -512,7 +520,8 @@ function startListening(){
       if(e.results[i].isFinal)collectedText+=t+' '; else interim=t;
     }
     const p=(collectedText+interim).trim();
-    document.getElementById('livePreview').textContent=p?'"'+p+'"':'';
+    const lp=document.getElementById('livePreview');
+    if(lp.value===''||!lp._userEdited) lp.value=p;
   };
   rec.onerror=e=>{listening=false;document.getElementById('btnMic').textContent='🎤 Puhu';document.getElementById('btnMic').classList.remove('recording');document.getElementById('micStatus').textContent='';document.getElementById('micStatus').className='mic-status';if(e.error!=='no-speech')showToast('Mikrofonivirhe: '+e.error);};
   rec.onend=()=>{if(listening)try{rec.start();}catch(e){}};
@@ -544,8 +553,11 @@ function disableInput(){
     document.getElementById('iosInput').disabled=true;
     document.getElementById('iosInputBox').classList.remove('show');
   }
-  document.getElementById('livePreview').classList.remove('show');
-  document.getElementById('livePreview').textContent='';
+  const lp2=document.getElementById('livePreview');
+  lp2.classList.remove('show');
+  lp2.value='';
+  lp2._userEdited=false;
+  document.getElementById('editHint').classList.remove('show');
   document.getElementById('micStatus').textContent='';
 }
 
@@ -615,6 +627,12 @@ function addMessage(role,text){
 function showTyping(){const t=document.getElementById('transcript');const d=document.createElement('div');d.className='msg claude typing';d.id='typingIndicator';d.innerHTML=`<div class="msg-name">${CALLERS[callType].name}</div><div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>`;t.appendChild(d);t.scrollTop=t.scrollHeight;}
 function hideTyping(){const e=document.getElementById('typingIndicator');if(e)e.remove();}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+document.getElementById('livePreview').addEventListener('input',()=>{
+  document.getElementById('livePreview')._userEdited=true;
+});
+document.getElementById('livePreview').addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();submitAnswer();}
+});
 document.getElementById('iosInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();submitAnswer();}});
 })();
 </script>
