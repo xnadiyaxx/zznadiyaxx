@@ -17,6 +17,8 @@
   var CFG = window.NPM_CONFIG || {};
   var TEXTS = window.NPM_TEXTS || {};
   var GRAPH = "https://graph.microsoft.com/v1.0/me/drive/special/approot";
+  var DRIVE_ITEMS = "https://graph.microsoft.com/v1.0/me/drive/items/";
+  var rootBase = null;   // sovelluskansion osoite tunnisteen kautta (ensureAppRoot asettaa)
   var GROUPS = ["naiset", "miehet", "korut"];
   var GROUP_TEXT = { naiset: "gWomen", miehet: "gMen", korut: "gJewel" };
   var SOLD_DAYS = 30;
@@ -190,7 +192,7 @@
      ONEDRIVE (Microsoft Graph, vain sovelluksen oma kansio)
      ===================================================================== */
   function itemUrl(path) {
-    return GRAPH + ":/" + path.split("/").map(encodeURIComponent).join("/");
+    return (rootBase || GRAPH) + ":/" + path.split("/").map(encodeURIComponent).join("/") + ":";
   }
 
   async function graph(method, url, opts) {
@@ -220,20 +222,8 @@
     try { return await res.json(); } catch (e) { return true; }
   }
 
-  var ensured = {};
-  async function ensureFolder(parentPath, name) {
-    var key = parentPath + "/" + name;
-    if (ensured[key]) return;
-    var url = parentPath ? itemUrl(parentPath) + ":/children" : GRAPH + "/children";
-    await graph("POST", url, {
-      json: { name: name, folder: {}, "@microsoft.graph.conflictBehavior": "fail" },
-      conflictOk: true
-    });
-    ensured[key] = true;
-  }
-
   async function listChildren(path) {
-    var url = itemUrl(path) + ":/children?$select=name,folder,file,createdDateTime&$top=200";
+    var url = itemUrl(path) + "/children?$select=name,folder,file,createdDateTime&$top=200";
     var items = [];
     while (url) {
       var data = await graph("GET", url);
@@ -245,10 +235,10 @@
   }
 
   function uploadFile(path, blob, type) {
-    return graph("PUT", itemUrl(path) + ":/content", { blob: blob, type: type });
+    return graph("PUT", itemUrl(path) + "/content", { blob: blob, type: type });
   }
   function deleteItem(path) {
-    return graph("DELETE", itemUrl(path));
+    return graph("DELETE", itemUrl(path).slice(0, -1));
   }
 
   /* =====================================================================
@@ -444,8 +434,7 @@
      NadiyaPublisher käsittelee vain kansiot, joissa se on. */
   async function uploadDraft(d) {
     var total = d.kuvat.length + 1;
-    await ensureFolder("", "saapuneet");
-    await ensureFolder("saapuneet", d.kansio);
+    /* Kansiot syntyvät OneDriveen automaattisesti ensimmäisen tiedoston mukana */
     var names = [];
     for (var i = 0; i < d.kuvat.length; i++) {
       setProgress(t("sending", { i: i + 1, n: d.kuvat.length }), i / total);
@@ -478,6 +467,7 @@
     $("progress").hidden = false;
     setProgress(t("preparing"), 0);
     var ok = false;
+    var failure = "";
     try {
       if (navigator.onLine === false) throw new Error("offline");
       await ensureAppRoot();
@@ -487,6 +477,7 @@
       ok = true;
     } catch (e) {
       if (e && e.message === "redirecting") return;   // siirrytään kirjautumaan; luonnos on tallessa
+      failure = (e && e.message) || "?";
     } finally {
       state.busy = false;
       $("newForm").hidden = false;
@@ -496,7 +487,7 @@
     if (ok) resetForm();
     show("viewList");
     toast(ok ? t("sent") + " " + t("pendingInfo")
-             : (navigator.onLine === false ? t("offline") + " " : "") + t("sendFail"));
+             : (navigator.onLine === false ? t("offline") + " " : "") + t("sendFail") + " [" + failure + "]");
     loadLists();
   }
 
@@ -566,7 +557,9 @@
   var approotReady = false;
   async function ensureAppRoot() {
     if (approotReady) return;
-    await graph("GET", GRAPH + "?$select=id,name");
+    var root = await graph("GET", GRAPH + "?$select=id,name");
+    if (!root || !root.id) throw new Error("approot");
+    rootBase = DRIVE_ITEMS + encodeURIComponent(root.id);
     approotReady = true;
   }
 
@@ -640,7 +633,7 @@
     try {
       await fn();
     } catch (e) {
-      if (!(e && e.message === "redirecting")) toast(t("actionFail"));
+      if (!(e && e.message === "redirecting")) toast(t("actionFail") + " [" + ((e && e.message) || "?") + "]");
     } finally {
       button.disabled = false;
     }
@@ -652,7 +645,6 @@
       pad(d.getUTCHours()) + pad(d.getUTCMinutes()) + pad(d.getUTCSeconds());
   }
   async function requestAction(kind, product) {
-    await ensureFolder("", "toiminnot");
     var name = kind + "--" + product.id + "--" + stamp() + ".json";
     var body = { versio: 1, toiminto: kind, tuote: product.id, aika: new Date().toISOString() };
     await uploadFile("toiminnot/" + name,
