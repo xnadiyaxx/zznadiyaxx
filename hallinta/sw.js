@@ -2,7 +2,7 @@
    Hakee sovelluksen tiedostot aina ensin verkosta, joten uusi versio tulee käyttöön
    heti seuraavalla avauskerralla. Välimuistia käytetään vain, jos verkko ei toimi.
    Microsoftin kirjautumiseen ja OneDriveen meneviin pyyntöihin ei kosketa. */
-const CACHE = "nadiya-pm-v1";
+const CACHE = "nadiya-pm-v2";
 const SHELL = [
   "./", "index.html", "app.css", "app.js", "config.js", "i18n.js",
   "lib/msal-browser.min.js", "manifest.webmanifest",

@@ -209,8 +209,11 @@
     if (res.status === 404 && (method === "GET" || method === "DELETE")) return null;
     if (res.status === 409 && opts.conflictOk) return true;
     if (!res.ok) {
-      var err = new Error("graph " + res.status);
+      var code = "";
+      try { var eb = await res.json(); code = (eb && eb.error && eb.error.code) || ""; } catch (e) { /* ei runkoa */ }
+      var err = new Error("graph " + res.status + (code ? " " + code : ""));
       err.status = res.status;
+      err.code = code;
       throw err;
     }
     if (res.status === 204) return true;
@@ -477,6 +480,7 @@
     var ok = false;
     try {
       if (navigator.onLine === false) throw new Error("offline");
+      await ensureAppRoot();
       await uploadDraft(d);
       rememberSent(d);
       await drafts.del(d.kansio);
@@ -558,10 +562,19 @@
     return map;
   }
 
+  /* Sovelluskansio luodaan OneDriveen ensimmäisellä kerralla, kun sitä pyydetään */
+  var approotReady = false;
+  async function ensureAppRoot() {
+    if (approotReady) return;
+    await graph("GET", GRAPH + "?$select=id,name");
+    approotReady = true;
+  }
+
   async function loadLists() {
     var msg = $("listMsg");
     msg.textContent = state.listLoaded ? "" : t("loading");
     try {
+      await ensureAppRoot();
       var results = await Promise.all([
         drafts.all(),
         listChildren("saapuneet"),
@@ -581,7 +594,7 @@
       renderLists();
     } catch (e) {
       if (e && e.message === "redirecting") return;
-      msg.textContent = t("loadFail");
+      msg.textContent = t("loadFail") + " [" + ((e && e.message) || "?") + "]";
     }
   }
 
