@@ -6,7 +6,7 @@
                joten sen saa julkaista. Ohje: OHJE.md, vaihe 1.
    ===================================================================== */
 window.NPM_CONFIG = {
-  clientId: "",
+  clientId: "b0aa19dc-de91-4e76-80b9-30068b3e45d6",
 
   // Vain henkilökohtaiset Microsoft-tilit (Outlook, Hotmail, Live jne.)
   authority: "https://login.microsoftonline.com/consumers",
