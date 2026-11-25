@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<!--
+  Nadiya Product Manager – hallintasovellus (PWA)
+  Lisätään iPhonen kotinäyttöön Safarin Jaa-valikosta.
+  Asetukset: config.js   Tekstit: i18n.js   Toiminnot: app.js
+-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Nadiya Product Manager</title>
+
+  <!-- Sisältösuojaus: koodia ladataan vain tästä kansiosta, yhteydet vain Microsoftin kirjautumiseen ja OneDriveen -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' blob: data:; connect-src 'self' https://graph.microsoft.com https://login.microsoftonline.com; frame-src https://login.microsoftonline.com; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+
+  <meta name="theme-color" content="#16335b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Nadiya PM">
+  <link rel="apple-touch-icon" href="icons/icon-180.png">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <header class="top">
+    <img class="top-logo" src="icons/icon-192.png" alt="" width="40" height="40">
+    <h1 dir="ltr">Nadiya Product Manager</h1>
+    <button id="langBtn" class="lang-btn" type="button"></button>
+  </header>
+
+  <main>
+    <!-- Ladataan -->
+    <section id="viewLoading" class="view center">
+      <p data-t="loading"></p>
+    </section>
+
+    <!-- Asetukset puuttuvat (config.js) -->
+    <section id="viewSetup" class="view center" hidden>
+      <h2 data-t="setupTitle"></h2>
+      <p data-t="setupText"></p>
+    </section>
+
+    <!-- Kirjautuminen -->
+    <section id="viewLogin" class="view center" hidden>
+      <h2 data-t="welcome"></h2>
+      <p data-t="loginInfo"></p>
+      <button id="loginBtn" class="btn primary big" type="button" data-t="login"></button>
+      <p id="loginMsg" class="error" role="alert"></p>
+    </section>
+
+    <!-- Omat tuotteet -->
+    <section id="viewList" class="view" hidden>
+      <button id="newBtn" class="btn primary big" type="button" data-t="newProductPlus"></button>
+      <div class="list-head">
+        <h2 data-t="myProducts"></h2>
+        <button id="refreshBtn" class="btn small" type="button" data-t="refresh"></button>
+      </div>
+      <p id="listMsg" class="msg" role="status"></p>
+      <div id="lists"></div>
+      <p class="who">
+        <span id="whoText"></span>
+        <button id="logoutBtn" class="link" type="button" data-t="logout"></button>
+      </p>
+    </section>
+
+    <!-- Uusi tuote -->
+    <section id="viewNew" class="view" hidden>
+      <button id="backBtn" class="link back" type="button" data-t="back"></button>
+      <h2 data-t="newProduct"></h2>
+
+      <form id="newForm" novalidate>
+        <div class="field">
+          <p class="label" data-t="photos"></p>
+          <ul id="photoList" class="photos"></ul>
+          <label class="btn add-photo">
+            <input id="photoInput" class="visually-hidden" type="file" accept="image/*" multiple>
+            <span data-t="addPhotos"></span>
+          </label>
+          <p class="help" data-t="photosHelp"></p>
+          <p id="photoMsg" class="msg" role="status"></p>
+        </div>
+
+        <fieldset class="field groups">
+          <legend class="label" data-t="group"></legend>
+          <label class="pill"><input type="radio" name="ryhma" value="naiset"><span data-t="gWomen"></span></label>
+          <label class="pill"><input type="radio" name="ryhma" value="miehet"><span data-t="gMen"></span></label>
+          <label class="pill"><input type="radio" name="ryhma" value="korut"><span data-t="gJewel"></span></label>
+        </fieldset>
+
+        <div class="field">
+          <label class="label" for="priceInput" data-t="price"></label>
+          <div class="price-row" dir="ltr">
+            <input id="priceInput" type="text" inputmode="decimal" autocomplete="off" maxlength="9">
+            <span aria-hidden="true">€</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label" for="descInput" data-t="desc"></label>
+          <textarea id="descInput" rows="5" maxlength="1500" data-t-ph="descPh"></textarea>
+          <p class="help" data-t="descHelp"></p>
+        </div>
+
+        <p id="formError" class="error" role="alert"></p>
+        <button id="sendBtn" class="btn primary big" type="submit" data-t="send"></button>
+      </form>
+
+      <div id="progress" class="progress" hidden>
+        <p id="progressText" role="status" aria-live="polite"></p>
+        <div class="bar"><div id="progressFill"></div></div>
+        <p class="help" data-t="keepOpen"></p>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <dialog id="confirmDlg" class="confirm">
+    <h3 id="confirmTitle"></h3>
+    <p id="confirmText"></p>
+    <div class="confirm-actions">
+      <button id="confirmNo" class="btn" type="button" data-t="no"></button>
+      <button id="confirmYes" class="btn primary" type="button" data-t="yes"></button>
+    </div>
+  </dialog>
+
+  <script src="lib/msal-browser.min.js"></script>
+  <script src="config.js"></script>
+  <script src="i18n.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
